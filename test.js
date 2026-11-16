@@ -121,6 +121,7 @@ T.set({ flt: 'aasm' }); tx = T.vTx(); ok(/data-k="tx2"/.test(tx) && !/data-k="tx
 T.set({ flt: 'all' });
 const longEn = 'CPAP: fixed pressure. APAP: if fixed CPAP is not tolerated, positional OSA or REM-related OSA. BPAP: CPAP intolerance or failure, treatment-emergent central apnoea, central hypoventilation, sleep-related hypoxaemia from lung disease.';
 ok((T.fmt(longEn).match(/class="ln"/g) || []).length === 3 && !/e\.g\.<\/span>/.test(T.fmt('e.g. PAP')), 'long lines split into sentences and labels');
+ok((T.fmt('Read the figure (pp. 90–91), which matches the pathway below. And then a second sentence that is long enough to trigger the splitting of long lines in the list view here.').match(/class="ln"/g) || []).length === 2, 'page references such as pp. 90 do not split a sentence');
 ok((T.fmt('Likelier to respond: declines PAP, young, BMI < 40, an obstructing structure, no serious comorbidity that rules out surgery, or a very long list of other findings that keeps going on.').match(/class="ln"/g) || []).length < 2, 'a lower-case phrase before a colon is not split');
 
 // ---- every tab renders in both languages without errors or stray tokens
