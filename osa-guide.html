@@ -686,7 +686,7 @@ document.addEventListener('click',e=>{
  const el=e.target.closest('[data-act],[data-tab],[data-jump],[data-flt]');if(!el)return;
  if(el.dataset.jump){const k=el.dataset.jump;openSet.add(k);render();const b=document.querySelector('[data-k="'+k+'"]');if(b)b.scrollIntoView({block:'start'});return}
  if(el.dataset.flt){txFlt=el.dataset.flt;render();return}
- if(el.dataset.tab){tab=el.dataset.tab;render();window.scrollTo(0,0);return}
+ if(el.dataset.tab){tab=el.dataset.tab;if(tab==='tx'){GRP.flatMap(g=>g[1]).forEach(k=>openSet.delete(k));openSet.add('map')}render();window.scrollTo(0,0);return}
  const ac=el.dataset.act;
  if((ac==='close'||ac==='dclose'||ac==='sclose')&&e.target!==el&&el.classList.contains('modal'))return;
  if(ac==='summary'){summaryOpen=true;render();return}
