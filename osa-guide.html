@@ -136,6 +136,28 @@ const STOPQ=[
 const ESSQ=[a('Sitting and reading','นั่งอ่านหนังสือ'),a('Watching TV','ดูโทรทัศน์'),a('Sitting inactive in a public place (theatre, meeting)','นั่งเฉยๆ ในที่สาธารณะ (โรงหนัง ประชุม)'),a('Passenger in a car for 1 hour without a break','นั่งรถเป็นผู้โดยสารต่อเนื่อง 1 ชม.'),a('Lying down to rest in the afternoon','เอนตัวพักตอนบ่าย'),a('Sitting and talking to someone','นั่งคุยกับผู้อื่น'),a('Sitting quietly after lunch (no alcohol)','นั่งเงียบๆ หลังอาหารกลางวัน (ไม่ดื่มแอลกอฮอล์)'),a('In a car, stopped a few minutes in traffic','อยู่ในรถ หยุดติดไฟแดง/การจราจรไม่กี่นาที')];
 const ESSOPT=[a('0 — would never doze','0 — ไม่เคยเผลอหลับ'),a('1 — slight chance','1 — มีโอกาสเล็กน้อย'),a('2 — moderate chance','2 — มีโอกาสปานกลาง'),a('3 — high chance','3 — มีโอกาสสูง')];
 
+/* Berlin Questionnaire (Netzer 1999); item 1 "Do you snore?" is not scored, so omitted */
+const FREQ=[a('Nearly every day','เกือบทุกวัน'),a('3–4 times a week','3–4 ครั้ง/สัปดาห์'),a('1–2 times a week','1–2 ครั้ง/สัปดาห์'),a('1–2 times a month','1–2 ครั้ง/เดือน'),a('Never or almost never','ไม่เคยหรือแทบไม่เคย')];
+const YN=[a('Yes','ใช่'),a('No','ไม่ใช่')];
+const LOUD=[a('Slightly louder than breathing','ดังกว่าการหายใจเล็กน้อย'),a('As loud as talking','ดังเท่าเสียงพูด'),a('Louder than talking','ดังกว่าเสียงพูด'),a('Very loud (heard in adjacent rooms)','ดังมาก (ได้ยินถึงห้องข้างๆ)')];
+const BERQ=[
+ [1,a('How loud is your snoring?','เสียงกรนดังแค่ไหน?'),LOUD,[1,2,3]],
+ [1,a('How often do you snore?','กรนบ่อยแค่ไหน?'),FREQ,[0,1]],
+ [1,a('Has your snoring bothered other people?','เสียงกรนรบกวนคนอื่นหรือไม่?'),YN,[0]],
+ [1,a('Has anyone noticed that you stop breathing during sleep?','มีคนสังเกตว่าคุณหยุดหายใจขณะหลับหรือไม่?'),FREQ,[0,1]],
+ [2,a('How often do you feel tired or fatigued after sleeping?','รู้สึกเหนื่อย/เพลียหลังตื่นนอนบ่อยแค่ไหน?'),FREQ,[0,1]],
+ [2,a('When awake, how often do you feel tired, fatigued or not up to par?','ตอนตื่น รู้สึกเหนื่อย เพลีย หรือไม่สดชื่นบ่อยแค่ไหน?'),FREQ,[0,1]],
+ [2,a('Have you ever nodded off or fallen asleep while driving?','เคยเผลอหลับขณะขับรถหรือไม่?'),YN,[0]],
+ [3,a('Do you have high blood pressure?','เป็นความดันโลหิตสูงหรือไม่?'),YN,[0]],
+ [3,a('Is your BMI > 30 kg/m²?','BMI > 30 กก./ม.² หรือไม่?'),YN,[0]]];
+let ber=Array(9).fill(null);
+function berRes(){
+ const pts=[0,0,0,0];
+ BERQ.forEach(([c,,,pos],i)=>{if(ber[i]!==null&&pos.includes(ber[i]))pts[c]++});
+ const cat=[null,pts[1]>=2,pts[2]>=2,pts[3]>=1];
+ const done=ber.every(v=>v!==null);
+ return{pts,cat,done,n:cat.slice(1).filter(Boolean).length};
+}
 function stopRisk(){
  const n=STOPQ.reduce((s,_,i)=>s+(stop[i]?1:0),0);
  const s4=[0,1,2,3].filter(i=>stop[i]).length;
@@ -234,7 +256,7 @@ const TX=[
  a('Repeat sleep study after significant weight change (± 10 %), after surgery / oral appliance, or if symptoms return.','ตรวจการนอนซ้ำเมื่อน้ำหนักเปลี่ยนมาก (± 10 %) หลังผ่าตัด/ใช้เครื่องมือในช่องปาก หรืออาการกลับมา')]],
 ];
 
-const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)')]]];
+const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)'),a('Berlin Questionnaire (3 categories, 9 scored items).','เพิ่มแบบสอบถาม Berlin (3 หมวด 9 ข้อที่นับคะแนน)')]]];
 
 /* ---------- render ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -258,6 +280,17 @@ function vCheck(){
  }
  return `<div class="card ${c}"><div class="res ${c}"><b>${tot}/${all}</b> ${t(a('items ticked','ข้อที่ติ๊ก'))}<small>${msg}</small></div><div style="margin-top:8px"><button class="btn" data-act="clear">${t(UI.reset)}</button></div></div>`+bl;
 }
+function berBlock(){
+ const r=berRes();
+ const cn=[null,a('Category 1 — snoring and apnoeas (positive ≥ 2 points)','หมวด 1 — การกรนและหยุดหายใจ (บวกเมื่อ ≥ 2 คะแนน)'),a('Category 2 — daytime tiredness (positive ≥ 2 points)','หมวด 2 — ความเหนื่อยตอนกลางวัน (บวกเมื่อ ≥ 2 คะแนน)'),a('Category 3 — hypertension or BMI > 30 (positive if either)','หมวด 3 — ความดันสูงหรือ BMI > 30 (บวกถ้ามีอย่างใดอย่างหนึ่ง)')];
+ let body='';
+ [1,2,3].forEach(c=>{
+  body+=`<p style="margin:10px 0 0;font-weight:800">${t(cn[c])} <span class="chip ${r.cat[c]?'rose':'emerald'}">${r.pts[c]} ${r.cat[c]?'+':'−'}</span></p>`;
+  BERQ.forEach(([cc,q,opts],i)=>{if(cc===c)body+=`<label style="display:block;margin:6px 0;font-weight:600">${t(q)}<select data-ber="${i}"><option value="">—</option>${opts.map((o,v)=>`<option value="${v}"${ber[i]===v?' selected':''}>${t(o)}</option>`).join('')}</select></label>`});
+ });
+ const res=r.done?`<div class="res ${r.n>=2?'rose':'emerald'}"><b>${r.n}/3 ${t(a('categories positive','หมวดที่เป็นบวก'))}</b> — ${r.n>=2?t(a('High risk of sleep apnoea','ความเสี่ยงสูงต่อ sleep apnoea')):t(a('Low risk','ความเสี่ยงต่ำ'))}<small>${t(a('High risk = 2 or more positive categories.','ความเสี่ยงสูง = เป็นบวก 2 หมวดขึ้นไป'))}</small></div>`:`<div class="res slate">N/A <small>${t(a('Answer all 9 items.','ตอบให้ครบ 9 ข้อ'))}</small></div>`;
+ return det('ber','sky',t(a('Berlin Questionnaire','แบบสอบถาม Berlin')),body+res+`<p class="note">${t(a('Item 1 of the original ("Do you snore?") is not scored and is left out here. Netzer NC et al., Ann Intern Med 1999.','ข้อ 1 ของต้นฉบับ ("คุณกรนหรือไม่?") ไม่นับคะแนน จึงไม่ได้ใส่ไว้ Netzer NC et al., Ann Intern Med 1999'))}</p>`,r.done?r.n+'/3':'N/A');
+}
 function vScore(){
  const r=stopRisk();
  const BMI30=a('BMI > 30 kg/m² (modified)?','BMI > 30 กก./ม.² (แบบปรับปรุง)?');
@@ -267,6 +300,7 @@ function vScore(){
  const eb=ESSQ.map((q,i)=>`<label style="display:block;margin:8px 0;font-weight:600">${i+1}. ${t(q)}<select data-ess="${i}"><option value="">—</option>${ESSOPT.map((o,v)=>`<option value="${v}"${ess[i]===v?' selected':''}>${t(o)}</option>`).join('')}</select></label>`).join('');
  return det('stop','indigo','STOP-Bang',sb+`<div class="res ${r.c}"><b>${r.n}/8</b> — ${t(RISKTXT[r.k])}<small>${t(RISKACT[r.k])}</small></div><p class="note">${sbMod?t(a('Modified: 0–2 low · ≥ 3 high. In that study a score ≥ 3 did not significantly predict overall perioperative adverse events, but it did flag difficult ventilation, laryngoscopic view ≥ 3, oxygen need after surgery and ICU admission.','แบบปรับปรุง: 0–2 ต่ำ · ≥ 3 สูง ในการศึกษานี้ คะแนน ≥ 3 ไม่สัมพันธ์กับภาวะแทรกซ้อนรวมอย่างมีนัยสำคัญ แต่บ่งชี้ภาวะใส่ท่อ/ช่วยหายใจยาก laryngoscopic view ≥ 3 ต้องการออกซิเจนหลังผ่าตัด และการเข้า ICU')):t(a('0–2 low · 3–4 intermediate · 5–8 high. Also high risk if ≥ 2 of the first four items plus male, BMI > 35 or neck > 40 cm.','0–2 ต่ำ · 3–4 ปานกลาง · 5–8 สูง และถือว่าสูงถ้า ≥ 2 ใน 4 ข้อแรก ร่วมกับเพศชาย BMI > 35 หรือรอบคอ > 40 ซม.'))}</p>`)
  +det('ess','amber','Epworth Sleepiness Scale',`<p class="note">${t(a('How likely are you to doze off (not just feel tired) in these situations, recently?','ในช่วงนี้ มีโอกาสเผลอหลับ (ไม่ใช่แค่รู้สึกเหนื่อย) ในสถานการณ์ต่อไปนี้มากเพียงใด'))}</p>${eb}`+(e?`<div class="res ${e.c}"><b>${e.s}/24</b> — ${t(ESSTXT[e.k])}<small>${t(a('Above 10 suggests excessive daytime sleepiness; sleepiness may be absent in many OSA patients, so a low score does not exclude OSA.','เกิน 10 บ่งชี้ง่วงกลางวันผิดปกติ ผู้ป่วย OSA จำนวนมากไม่ง่วง คะแนนต่ำจึงไม่ตัด OSA'))}</small></div>`:`<div class="res slate">N/A <small>${t(a('Answer all 8 items.','ตอบให้ครบ 8 ข้อ'))}</small></div>`),e?e.s+'/24':'N/A')
+ +berBlock()
  +`<p class="note">${t(a('Neck cut-off 40 cm follows the original STOP-Bang; Asian cut-offs for BMI may be lower — judge clinically.','เกณฑ์รอบคอ 40 ซม. ตาม STOP-Bang ต้นฉบับ เกณฑ์ BMI ของเอเชียอาจต่ำกว่า — ใช้ดุลยพินิจ'))}</p>`;
 }
 function vPsg(){
@@ -283,7 +317,7 @@ function vTx(){
  return TX.map(([c,ti,items],i)=>det('tx'+i,c,t(ti),'<ul>'+items.map(x=>`<li>${t(x)}</li>`).join('')+'</ul>','')).join('');
 }
 function vSrc(){
- return `<div class="card"><p><b>${t(a('Based on commonly cited criteria:','อ้างอิงเกณฑ์ที่ใช้กันทั่วไป:'))}</b></p><ul><li>AASM Clinical Practice Guideline — diagnostic testing for adult OSA (2017)</li><li>AASM Manual for the Scoring of Sleep and Associated Events (AHI definitions)</li><li>AASM Clinical Practice Guideline — PAP treatment of OSA (2019)</li><li>AASM / AADSM guideline — oral appliance therapy (2015)</li><li>STOP-Bang: Chung F et al., Anesthesiology 2008; Epworth Sleepiness Scale: Johns MW, Sleep 1991</li><li>Modified STOP-Bang: Sangkum L et al., BMC Anesthesiol 2021;21:132, PMID 33906600, <a href="https://doi.org/10.1186/s12871-021-01347-0" target="_blank" rel="noopener">doi:10.1186/s12871-021-01347-0</a></li><li>US FDA — tirzepatide label for OSA (Dec 2024)</li></ul><p class="note">${t(a('Not re-verified line by line against the original documents in this app, and no Thai national OSA guideline is included. Check the current guideline and local availability before acting. N/A is shown wherever data are missing.','แอปนี้ยังไม่ได้ตรวจเทียบทีละบรรทัดกับเอกสารต้นฉบับ และไม่ได้รวมแนวทางเวชปฏิบัติ OSA ของไทย โปรดตรวจแนวทางล่าสุดและความพร้อมใช้ในประเทศก่อนใช้ ข้อมูลที่ไม่มีแสดงเป็น N/A'))}</p></div>`;
+ return `<div class="card"><p><b>${t(a('Based on commonly cited criteria:','อ้างอิงเกณฑ์ที่ใช้กันทั่วไป:'))}</b></p><ul><li>AASM Clinical Practice Guideline — diagnostic testing for adult OSA (2017)</li><li>AASM Manual for the Scoring of Sleep and Associated Events (AHI definitions)</li><li>AASM Clinical Practice Guideline — PAP treatment of OSA (2019)</li><li>AASM / AADSM guideline — oral appliance therapy (2015)</li><li>STOP-Bang: Chung F et al., Anesthesiology 2008; Epworth Sleepiness Scale: Johns MW, Sleep 1991</li><li>Berlin Questionnaire: Netzer NC et al., Ann Intern Med 1999;131:485-491</li><li>Modified STOP-Bang: Sangkum L et al., BMC Anesthesiol 2021;21:132, PMID 33906600, <a href="https://doi.org/10.1186/s12871-021-01347-0" target="_blank" rel="noopener">doi:10.1186/s12871-021-01347-0</a></li><li>US FDA — tirzepatide label for OSA (Dec 2024)</li></ul><p class="note">${t(a('Not re-verified line by line against the original documents in this app, and no Thai national OSA guideline is included. Check the current guideline and local availability before acting. N/A is shown wherever data are missing.','แอปนี้ยังไม่ได้ตรวจเทียบทีละบรรทัดกับเอกสารต้นฉบับ และไม่ได้รวมแนวทางเวชปฏิบัติ OSA ของไทย โปรดตรวจแนวทางล่าสุดและความพร้อมใช้ในประเทศก่อนใช้ ข้อมูลที่ไม่มีแสดงเป็น N/A'))}</p></div>`;
 }
 const VIEW={check:vCheck,score:vScore,psg:vPsg,tx:vTx,src:vSrc};
 
@@ -314,6 +348,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{
  const d=e.target.dataset;
  if(d.ck!==undefined){if(e.target.checked)checks[d.ck]=1;else delete checks[d.ck];save();render()}
+ else if(d.ber!==undefined){ber[d.ber]=e.target.value===''?null:+e.target.value;render()}
  else if(d.sbmod!==undefined){sbMod=e.target.checked;render()}
  else if(d.st!==undefined){stop[d.st]=e.target.checked;render()}
  else if(d.ess!==undefined){ess[d.ess]=e.target.value===''?null:+e.target.value;render()}
