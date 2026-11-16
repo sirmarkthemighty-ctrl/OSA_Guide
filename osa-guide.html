@@ -62,6 +62,8 @@ th,td{border:1px solid var(--bd);padding:5px 7px;text-align:left;vertical-align:
 th{background:var(--inset)}
 .tw{overflow-x:auto}
 ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
+.lst{list-style:none;margin:0;padding:0}.lst li{margin:0;padding:8px 0;border-top:1px solid var(--bd);line-height:1.55;font-size:13.5px}.lst li:first-child{border-top:0}.lst b{color:var(--tx)}
+.sg{display:flex;align-items:center;gap:6px;margin:14px 0 2px;font:800 11px/1.2 inherit;font-family:inherit;color:var(--c);letter-spacing:.02em}.sg:first-child{margin-top:8px}
 .note{font-size:11px;color:var(--mu)}
 .chip{display:inline-block;font-size:10px;font-weight:700;border:1px solid var(--cd);background:var(--cb);color:var(--c);border-radius:4px;padding:1px 4px;margin-right:4px}
 .btn{border:1px solid var(--bd);background:var(--card);color:var(--mu);border-radius:8px;padding:6px 12px;font:700 11px inherit;font-family:inherit;cursor:pointer;box-shadow:0 1px 2px #0001}
@@ -238,7 +240,11 @@ function psgOut(){
 
 /* ---------- treatment ---------- */
 const G=(en,th)=>({en,th,g:1});
-const lis=items=>'<ul>'+items.map(x=>`<li>${x.g===2?'<span class="chip sky">AASM</span>':x.g?'<span class="chip emerald">TH</span>':''}${t(x)}</li>`).join('')+'</ul>';
+const SRCH={1:[a('Thai guideline 2025','แนวทางไทย 2568'),'emerald','TH'],2:[a('AASM guidelines','แนวทาง AASM'),'sky','AASM'],0:[a('General practice','แนวปฏิบัติทั่วไป'),'slate','']};
+const PILL={Strong:'emerald',Conditional:'amber',Weak:'amber',Standard:'indigo',Guideline:'slate'};
+const fmt=s=>{const m=s.match(/^([^:.]{3,42}):\s+([\s\S]*)$/);if(m)s='<b>'+m[1]+':</b> '+m[2];return s.replace(/\((Strong|Conditional|Weak|Standard|Guideline)\)/g,(_,w)=>'<span class="chip '+PILL[w]+'">'+w+'</span>')};
+const lis=items=>{const gs=[1,2,0].map(k=>[k,items.filter(x=>(x.g||0)===k)]).filter(g=>g[1].length);const mixed=gs.length>1;
+ return gs.map(([k,xs])=>(mixed||k?'<div class="sg">'+(SRCH[k][2]?'<span class="chip '+SRCH[k][1]+'">'+SRCH[k][2]+'</span>':'')+t(SRCH[k][0])+'</div>':'')+'<ul class="lst">'+xs.map(x=>'<li>'+fmt(t(x))+'</li>').join('')+'</ul>').join('')};
 /* TH = from the Thai guideline 2025 (Supiyaphan, Sonsuwan et al.; Thai Snoring and Sleep Apnea Society, RCOT); own summary, journal page numbers in the source line */
 const K=(en,th)=>({en,th,g:2});
 const AASM_DX=[K("Good practice: test within a comprehensive sleep evaluation with adequate follow-up; polysomnography (PSG) is the standard diagnostic test.","หลักปฏิบัติที่ดี: ตรวจภายใต้การประเมินการนอนหลับอย่างครบถ้วนและติดตามผลอย่างเหมาะสม PSG เป็นการตรวจมาตรฐานเพื่อวินิจฉัย"),
@@ -406,7 +412,7 @@ function vPsg(){
  +det('psgread','slate',t(a('What to read in a report','อ่านอะไรในรายงาน')),read);
 }
 function vTx(){
- return `<p class="note" style="margin:10px 0 0">${t(a('TH = Thai guideline 2025; AASM = AASM guideline, with its strength rating in brackets; other lines are general practice.','TH = แนวทางไทย 2568; AASM = แนวทาง AASM พร้อมระดับน้ำหนักในวงเล็บ ส่วนอื่นเป็นแนวปฏิบัติทั่วไป'))}</p>`+TX.map(([c,ti,items,src],i)=>det('tx'+i,c,t(ti),lis(items)+(src?`<p class="note">${t(a('Thai guideline 2025 pages','หน้าแนวทางไทย 2568'))}: ${src}</p>`:''),'')).join('');
+ return TX.map(([c,ti,items,src],i)=>det('tx'+i,c,t(ti),lis(items)+(src?`<p class="note">${t(a('Thai guideline 2025 pages','หน้าแนวทางไทย 2568'))}: ${src}</p>`:''),'')).join('');
 }
 function vSrc(){
  return `<div class="card"><p><b>${t(a('Based on commonly cited criteria:','อ้างอิงเกณฑ์ที่ใช้กันทั่วไป:'))}</b></p><ul><li>AASM guideline, diagnostic testing for adult OSA: Kapur VK et al., J Clin Sleep Med 2017;13:479-504, <a href="https://doi.org/10.5664/jcsm.6506" target="_blank" rel="noopener">doi:10.5664/jcsm.6506</a></li><li>AASM Manual for the Scoring of Sleep and Associated Events (AHI definitions)</li><li>AASM guideline, PAP treatment of adult OSA: Patil SP et al., J Clin Sleep Med 2019;15:335-343, <a href="https://doi.org/10.5664/jcsm.7640" target="_blank" rel="noopener">doi:10.5664/jcsm.7640</a></li><li>AASM/AADSM guideline, oral appliance therapy: Ramar K et al., J Clin Sleep Med 2015;11:773-827, <a href="https://doi.org/10.5664/jcsm.4858" target="_blank" rel="noopener">doi:10.5664/jcsm.4858</a></li><li>AASM guideline, referral for surgical consultation: Kent D et al., J Clin Sleep Med 2021;17:2499-2505, <a href="https://doi.org/10.5664/jcsm.9592" target="_blank" rel="noopener">doi:10.5664/jcsm.9592</a></li><li>AASM guideline, evaluation, management and long-term care of OSA in adults: Epstein LJ et al., J Clin Sleep Med 2009;5:263-276</li><li>STOP-Bang: Chung F et al., Anesthesiology 2008; Epworth Sleepiness Scale: Johns MW, Sleep 1991</li><li>Thai guideline: แนวทางการพัฒนาการวินิจฉัยและรักษานอนกรนและโรคหยุดหายใจขณะหลับจากการอุดกั้นในประเทศไทย สำหรับผู้ใหญ่ พ.ศ. 2568 (Supiyaphan P, Sonsuwan N, et al.; 30 authors), Thai J Otolaryngol Head Neck Surg 2024;25(2):89- ; <a href="https://he02.tci-thaijo.org/index.php/rcotJ/article/view/274258" target="_blank" rel="noopener">he02.tci-thaijo.org</a></li><li>Berlin Questionnaire: Netzer NC et al., Ann Intern Med 1999;131:485-491</li><li>Modified STOP-Bang: Sangkum L et al., BMC Anesthesiol 2021;21:132, PMID 33906600, <a href="https://doi.org/10.1186/s12871-021-01347-0" target="_blank" rel="noopener">doi:10.1186/s12871-021-01347-0</a></li><li>US FDA — tirzepatide label for OSA (Dec 2024)</li></ul><p class="note">${t(a('Not re-verified line by line against the original documents in this app, and the Thai guideline is summarised in its own tab. Check the current guideline and local availability before acting. N/A is shown wherever data are missing.','แอปนี้ยังไม่ได้ตรวจเทียบทีละบรรทัดกับเอกสารต้นฉบับ และแนวทางไทยสรุปไว้ในแท็บของตัวเอง โปรดตรวจแนวทางล่าสุดและความพร้อมใช้ในประเทศก่อนใช้ ข้อมูลที่ไม่มีแสดงเป็น N/A'))}</p></div>`+`<div class="card"><p><b>${t(a('Thai guideline 2025: coverage and limits','แนวทางไทย 2568: ขอบเขตและข้อจำกัด'))}</b></p>`+lis(THAIABOUT)+`</div>`;
