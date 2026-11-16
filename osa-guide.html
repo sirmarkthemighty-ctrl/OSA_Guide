@@ -62,6 +62,10 @@ th,td{border:1px solid var(--bd);padding:5px 7px;text-align:left;vertical-align:
 th{background:var(--inset)}
 .tw{overflow-x:auto}
 ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
+label.ck input.sw{appearance:none;-webkit-appearance:none;width:40px;height:22px;margin:0;border-radius:999px;background:color-mix(in srgb,var(--mu) 45%,var(--card));position:relative;cursor:pointer;transition:background .15s}
+label.ck input.sw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #0004;transition:transform .15s}
+label.ck input.sw:checked{background:#4f46e5}
+label.ck input.sw:checked::after{transform:translateX(18px)}
 .lst{list-style:none;margin:0;padding:0}.lst li{margin:0;padding:8px 0;border-top:1px solid var(--bd);line-height:1.55;font-size:13.5px}.lst li:first-child{border-top:0}.lst b{color:var(--tx)}
 .sg{display:flex;align-items:center;gap:6px;margin:14px 0 2px;font:800 11px/1.2 inherit;font-family:inherit;color:var(--c);letter-spacing:.02em}.sg:first-child{margin-top:8px}
 .note{font-size:11px;color:var(--mu)}
@@ -391,7 +395,7 @@ function berBlock(){
 function vScore(){
  const r=stopRisk();
  const BMI30=a('BMI > 30 kg/m² (modified)?','BMI > 30 กก./ม.² (แบบปรับปรุง)?');
- const tog=`<label class="ck"><input type="checkbox" data-sbmod="1"${sbMod?' checked':''}><span><b>${t(a('Modified STOP-Bang (Thai)','STOP-Bang แบบปรับปรุง (ไทย)'))}</b><small>${t(a('BMI cut-off > 30 instead of > 35; high risk = score ≥ 3. Ramathibodi study, 400 elective surgical patients, BMC Anesthesiol 2021.','BMI > 30 แทน > 35; ความเสี่ยงสูง = คะแนน ≥ 3 การศึกษารามาธิบดี ผู้ป่วยผ่าตัดตามแผน 400 ราย BMC Anesthesiol 2021'))}</small></span></label>`;
+ const tog=`<label class="ck" style="align-items:center"><span style="flex:1;min-width:0"><b>${t(a('Modified STOP-Bang (Thai)','STOP-Bang แบบปรับปรุง (ไทย)'))}</b><small>${t(a('BMI cut-off > 30 instead of > 35; high risk = score ≥ 3. Ramathibodi study, 400 elective surgical patients, BMC Anesthesiol 2021.','BMI > 30 แทน > 35; ความเสี่ยงสูง = คะแนน ≥ 3 การศึกษารามาธิบดี ผู้ป่วยผ่าตัดตามแผน 400 ราย BMC Anesthesiol 2021'))}</small></span><input type="checkbox" class="sw" role="switch" aria-checked="${sbMod}" data-sbmod="1"${sbMod?' checked':''}></label>`;
  const sb=tog+STOPQ.map(([q],i)=>`<label class="ck"><input type="checkbox" data-st="${i}"${stop[i]?' checked':''}><span>${t(sbMod&&i===4?BMI30:q)}</span></label>`).join('');
  const e=essRes();
  const eb=ESSQ.map((q,i)=>`<label style="display:block;margin:8px 0;font-weight:600">${i+1}. ${t(q)}<select data-ess="${i}"><option value="">—</option>${ESSOPT.map((o,v)=>`<option value="${v}"${ess[i]===v?' selected':''}>${t(o)}</option>`).join('')}</select></label>`).join('');
