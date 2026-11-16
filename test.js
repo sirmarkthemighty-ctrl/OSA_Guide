@@ -189,12 +189,13 @@ ok(/☐/.test(he) && !/name/i.test(he.replace(/Warodom Phaenthong/, '')), 'hando
 const htx = T.handoutText('th'); ok(TH.test(htx) && /\[ \]/.test(htx) && !/undefined/.test(htx), 'handout text copy works in Thai');
 T.set({ lang: 'en' }); ok(/data-hand-modal/.test(T.handModal()) && /data-act="hprint"/.test(T.handModal()), 'handout pop-up has print and copy');
 
-// ---- changelog: one entry per update, newest first, own version + date + time, page shows the latest version
-const cl = T.CHANGELOG, vs = cl.map(e => e[0]);
+// ---- changelog: one merged entry per day (Semantic Versioning), newest first; the page shows the newest version
+const cl = T.CHANGELOG, vs = cl.map(e => e[0]), ds = cl.map(e => e[1]);
 const num3 = v => v.split('.').map(Number);
-ok(vs.length === new Set(vs).size, 'changelog versions are unique');
-ok(cl.every((e, i) => i === 0 || (() => { const a = num3(cl[i - 1][0]), b = num3(e[0]); return a[0] > b[0] || (a[0] === b[0] && a[1] > b[1]) || (a[0] === b[0] && a[1] === b[1] && a[2] > b[2]); })()), 'changelog is newest first with rising versions');
-ok(cl.every(e => /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(e[1])), 'every changelog entry has a date and a time');
+const greater = (x, y) => { const p = num3(x), q = num3(y); return p[0] !== q[0] ? p[0] > q[0] : p[1] !== q[1] ? p[1] > q[1] : p[2] > q[2]; };
+ok(vs.every(v => /^\d+\.\d+\.\d+$/.test(v)), 'versions look like MAJOR.MINOR.PATCH');
+ok(ds.length === new Set(ds).size && ds.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d)), 'one entry per day, each dated');
+ok(cl.every((e, i) => i === 0 || (ds[i - 1] > ds[i] && greater(vs[i - 1], vs[i]))), 'entries are newest first and every new day has a higher version');
 ok(cl.every(e => e[2].length >= 1), 'no empty changelog entry');
 ok(T.VERSION === cl[0][0], 'the version pill shows the newest changelog entry (' + T.VERSION + ' vs ' + cl[0][0] + ')');
 
