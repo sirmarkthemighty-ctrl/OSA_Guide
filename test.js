@@ -14,7 +14,7 @@ const document = { getElementById: id => els[id] || (els[id] = el()), createElem
 const ctx = vm.createContext({ document, window: { scrollTo() {}, scrollY: 0, print() {} }, navigator: { language: 'en' }, localStorage: { getItem(k) { return store[k] ?? null; }, setItem(k, v) { store[k] = String(v); } }, scrollTo() {}, addEventListener() {}, innerWidth: 1000, scrollY: 0, matchMedia: () => ({ matches: false }), getSelection: () => ({}), console });
 vm.runInContext(code + `
 ;globalThis.__T={GROUPS,TX,SCR,PSGTEST,PSGDEF,COMPL,AASM_DX,AASM_PAP,AASM_OA,AASM_SURG,AASM_FU,THAIABOUT,STOPQ,ESSQ,ESSOPT,BERQ,PF,UI,CHANGELOG,DONATE,
- HAND,handoutHtml,handoutText,handModal,PF2,VERSION,NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
+ HAND,handoutHtml,handoutText,handModal,PF2,VERSION,thaiDate,changelogModal,NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
  set:(o)=>{if('body'in o)body=o.body;if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('kku'in o)sbKku=o.kku;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
  get:()=>({stop,ber,fromCheck,checks,body,psg,pap,sbMod,sbKku}),render};`, ctx);
 const T = ctx.__T;
@@ -31,7 +31,7 @@ T.TX.forEach(([c, ti, items], i) => { bi(ti, 'TX title ' + i); items.forEach((x,
 T.STOPQ.forEach(([q], i) => bi(q, 'STOPQ' + i)); T.ESSQ.forEach((q, i) => bi(q, 'ESSQ' + i)); T.ESSOPT.forEach((q, i) => bi(q, 'ESSOPT' + i));
 T.BERQ.forEach(([c, q, opts], i) => { bi(q, 'BERQ' + i); opts.forEach((o, j) => bi(o, 'BERQ' + i + '.' + j)); });
 T.PF.forEach(([k, l]) => bi(l, 'PF ' + k));
-T.CHANGELOG.forEach(([v, d, ls]) => ls.forEach((x, i) => bi(x, 'changelog ' + v + '.' + i)));
+T.CHANGELOG.forEach(e => { e.features.forEach((x, i) => bi(x, 'changelog ' + e.version + ' feature ' + i)); e.bugs.forEach((x, i) => bi(x, 'changelog ' + e.version + ' fix ' + i)); });
 ['en', 'th'].forEach(l => ['title', 'intro', 'scan', 'note', 'alt', 'close', 'btn'].forEach(k => ok(T.DONATE[l][k], 'donate ' + l + '.' + k)));
 ok(T.DONATE.qr.startsWith('data:image/jpeg;base64,') && T.DONATE.qr.length > 50000, 'donate QR embedded');
 // every AASM line carries its strength rating
@@ -190,14 +190,19 @@ const htx = T.handoutText('th'); ok(TH.test(htx) && /\[ \]/.test(htx) && !/undef
 T.set({ lang: 'en' }); ok(/data-hand-modal/.test(T.handModal()) && /data-act="hprint"/.test(T.handModal()), 'handout pop-up has print and copy');
 
 // ---- changelog: one merged entry per day (Semantic Versioning), newest first; the page shows the newest version
-const cl = T.CHANGELOG, vs = cl.map(e => e[0]), ds = cl.map(e => e[1]);
+const cl = T.CHANGELOG, vs = cl.map(e => e.version), MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const toDay = d => { const m = /^(\w+) (\d+), (\d{4})$/.exec(d); return m ? new Date(+m[3], MON.indexOf(m[1]), +m[2]).getTime() : NaN; };
 const num3 = v => v.split('.').map(Number);
 const greater = (x, y) => { const p = num3(x), q = num3(y); return p[0] !== q[0] ? p[0] > q[0] : p[1] !== q[1] ? p[1] > q[1] : p[2] > q[2]; };
-ok(vs.every(v => /^\d+\.\d+\.\d+$/.test(v)), 'versions look like MAJOR.MINOR.PATCH');
-ok(ds.length === new Set(ds).size && ds.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d)), 'one entry per day, each dated');
-ok(cl.every((e, i) => i === 0 || (ds[i - 1] > ds[i] && greater(vs[i - 1], vs[i]))), 'entries are newest first and every new day has a higher version');
-ok(cl.every(e => e[2].length >= 1), 'no empty changelog entry');
-ok(T.VERSION === cl[0][0], 'the version pill shows the newest changelog entry (' + T.VERSION + ' vs ' + cl[0][0] + ')');
+ok(vs.every(v => /^\d+\.\d+\.\d+$/.test(v)), 'versions look like MAJOR.MINOR.PATCH (shown as v1.2.3)');
+ok(cl.every(e => /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, \d{4}$/.test(e.date)), 'dates are written like "November 16, 2026", as in the Bronchodilator Guide');
+ok(new Set(cl.map(e => e.date)).size === cl.length, 'one entry per day');
+ok(cl.every((e, i) => i === 0 || (toDay(cl[i - 1].date) > toDay(e.date) && greater(vs[i - 1], vs[i]))), 'entries are newest first and every new day has a higher version');
+ok(cl.every(e => Array.isArray(e.features) && Array.isArray(e.bugs) && e.features.length + e.bugs.length >= 1), 'each entry has features and bug-fix lists and is not empty');
+ok(T.VERSION === cl[0].version, 'the version pill shows the newest changelog entry (' + T.VERSION + ' vs ' + cl[0].version + ')');
+ok(T.thaiDate('November 16, 2026') === '16 พฤศจิกายน 2569', 'Thai changelog dates use the Buddhist year');
+T.set({ lang: 'en' }); const clm = T.changelogModal(); ok(/Update Changelog/.test(clm) && /Latest/.test(clm) && /New Features/.test(clm) && /v1\.0\.0/.test(clm) && /November 16, 2026/.test(clm), 'changelog pop-up (EN) has the Bronchodilator layout: title, Latest badge, New Features, version, date');
+T.set({ lang: 'th' }); const clt = T.changelogModal(); ok(/ประวัติการอัปเดต/.test(clt) && /ล่าสุด/.test(clt) && /16 พฤศจิกายน 2569/.test(clt), 'changelog pop-up (TH)'); T.set({ lang: 'en' });
 
 // ---- every tab renders in both languages without errors or stray tokens
 for (const lg of ['en', 'th']) for (const tb of ['check', 'score', 'psg', 'tx', 'src']) {
