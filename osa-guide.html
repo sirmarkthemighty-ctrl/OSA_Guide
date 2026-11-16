@@ -67,6 +67,7 @@ label.ck input.sw::after{content:"";position:absolute;top:2px;left:2px;width:18p
 label.ck input.sw:checked{background:#4f46e5}
 label.ck input.sw:checked::after{transform:translateX(18px)}
 .lst{list-style:none;margin:0;padding:0}.lst li{margin:0;padding:8px 0;border-top:1px solid var(--bd);line-height:1.55;font-size:13.5px}.lst li:first-child{border-top:0}.lst b{color:var(--tx)}
+.lst li.cl{margin:6px 0;padding:8px 10px;border:1px solid var(--cd);background:var(--cb);border-radius:8px}.lst li.cl b{color:var(--c)}
 .sg{display:flex;align-items:center;gap:6px;margin:14px 0 2px;font:800 11px/1.2 inherit;font-family:inherit;color:var(--c);letter-spacing:.02em}.sg:first-child{margin-top:8px}
 .note{font-size:11px;color:var(--mu)}
 .chip{display:inline-block;font-size:10px;font-weight:700;border:1px solid var(--cd);background:var(--cb);color:var(--c);border-radius:4px;padding:1px 4px;margin-right:4px}
@@ -247,8 +248,10 @@ const G=(en,th)=>({en,th,g:1});
 const SRCH={1:[a('Thai guideline 2025','แนวทางไทย 2568'),'emerald','TH'],2:[a('AASM guidelines','แนวทาง AASM'),'sky','AASM'],0:[a('General practice','แนวปฏิบัติทั่วไป'),'slate','']};
 const PILL={Strong:'emerald',Conditional:'amber',Weak:'amber',Standard:'indigo',Guideline:'slate'};
 const fmt=s=>{const m=s.match(/^([^:.]{3,42}):\s+([\s\S]*)$/);if(m)s='<b>'+m[1]+':</b> '+m[2];return s.replace(/\((Strong|Conditional|Weak|Standard|Guideline)\)/g,(_,w)=>'<span class="chip '+PILL[w]+'">'+w+'</span>')};
+const ROWC=[[/^Snoring or suspected/,"slate"],[/^Low risk/,"emerald"],[/^High risk/,"rose"],[/^PAP route/,"indigo"],[/^Non-PAP route/,"teal"],[/^Poor response/,"orange"],[/^(Disease factors|Patient factors|Many symptoms)/,"violet"],[/^Multimodality/,"sky"],[/^Not recommended/,"rose"],[/^(No recommendation|Awaiting more data)/,"amber"],[/^Good practice/,"emerald"]];
+const rowc=x=>{const r=ROWC.find(r=>r[0].test(x.en));return r?r[1]:""};
 const lis=items=>{const gs=[1,2,0].map(k=>[k,items.filter(x=>(x.g||0)===k)]).filter(g=>g[1].length);const mixed=gs.length>1;
- return gs.map(([k,xs])=>(mixed||k?'<div class="sg">'+(SRCH[k][2]?'<span class="chip '+SRCH[k][1]+'">'+SRCH[k][2]+'</span>':'')+t(SRCH[k][0])+'</div>':'')+'<ul class="lst">'+xs.map(x=>'<li>'+fmt(t(x))+'</li>').join('')+'</ul>').join('')};
+ return gs.map(([k,xs])=>(mixed||k?'<div class="sg">'+(SRCH[k][2]?'<span class="chip '+SRCH[k][1]+'">'+SRCH[k][2]+'</span>':'')+t(SRCH[k][0])+'</div>':'')+'<ul class="lst">'+xs.map(x=>{const c=rowc(x);return '<li'+(c?' class="cl '+c+'"':'')+'>'+fmt(t(x))+'</li>'}).join('')+'</ul>').join('')};
 /* TH = from the Thai guideline 2025 (Supiyaphan, Sonsuwan et al.; Thai Snoring and Sleep Apnea Society, RCOT); own summary, journal page numbers in the source line */
 const K=(en,th)=>({en,th,g:2});
 const AASM_DX=[K("Good practice: test within a comprehensive sleep evaluation with adequate follow-up; polysomnography (PSG) is the standard diagnostic test.","หลักปฏิบัติที่ดี: ตรวจภายใต้การประเมินการนอนหลับอย่างครบถ้วนและติดตามผลอย่างเหมาะสม PSG เป็นการตรวจมาตรฐานเพื่อวินิจฉัย"),
@@ -294,7 +297,8 @@ const TX=[
 ["indigo",a("Care pathway and evaluation","ขั้นตอนการดูแลและการประเมิน"),[G("Snoring or suspected OSA → assess risk from history, examination, questionnaire and other data.","นอนกรนหรือสงสัย OSA → ประเมินความเสี่ยงจากประวัติ ตรวจร่างกาย แบบสอบถาม และข้อมูลอื่น"),
  G("Low risk: comprehensive multidimensional evaluation; consider lifestyle change, snoring treatment (oral appliance, minimally invasive or surgical options) or referral to a sleep specialist.","ความเสี่ยงต่ำ: ประเมินหลายมิติอย่างละเอียด พิจารณาปรับวิถีชีวิต รักษาการกรน (อุปกรณ์ในช่องปาก หัตถการรุกล้ำน้อย หรือผ่าตัด) หรือส่งต่อผู้เชี่ยวชาญด้านการนอนหลับ"),
  G("High risk: sleep test (attended or unattended) to confirm, then multidimensional evaluation of disease, patient and treatment factors.","ความเสี่ยงสูง: ตรวจการนอนหลับ (มี/ไม่มีเจ้าหน้าที่เฝ้า) เพื่อยืนยัน แล้วประเมินหลายมิติ ได้แก่ ปัจจัยโรค ผู้ป่วย และวิธีรักษา"),
- G("Marked sleepiness with significant comorbidity: lifestyle plus PAP first (education, review, troubleshooting). Otherwise lifestyle plus a non-PAP option after upper-airway investigation.","ง่วงมากและมีโรคร่วมสำคัญ: ปรับวิถีชีวิตร่วมกับ PAP เป็นทางเลือกแรก (ให้ความรู้ ประเมิน แก้ปัญหา) กรณีอื่น: ปรับวิถีชีวิตร่วมกับวิธีที่ไม่ใช่ PAP หลังตรวจทางเดินหายใจส่วนบน"),
+ G("PAP route: marked sleepiness with significant comorbidity: lifestyle plus PAP first (education, review, troubleshooting).","เส้นทาง PAP: ง่วงมากและมีโรคร่วมสำคัญ: ปรับวิถีชีวิตร่วมกับ PAP เป็นทางเลือกแรก (ให้ความรู้ ประเมิน แก้ปัญหา)"),
+ G("Non-PAP route: otherwise lifestyle plus a non-PAP option after upper-airway investigation.","เส้นทางที่ไม่ใช่ PAP: กรณีอื่น ปรับวิถีชีวิตร่วมกับวิธีที่ไม่ใช่ PAP หลังตรวจทางเดินหายใจส่วนบน"),
  G("Poor response or refusal: fix the problem, change treatment or combine treatments (multimodality), and repeat testing if indicated.","ตอบสนองไม่ดีหรือไม่ยอมรับ: แก้ปัญหา เปลี่ยนวิธี หรือรักษาหลายวิธีร่วมกัน และตรวจซ้ำถ้ามีข้อบ่งชี้"),
  G("Disease factors: symptom group (excessively sleepy, disturbed sleep, minimally symptomatic) and sleep-test findings (oxygen data, position, REM).","ปัจจัยโรค: กลุ่มอาการ (ง่วงมาก นอนไม่สนิท อาการน้อย) และผลตรวจการนอน (ข้อมูลออกซิเจน ท่านอน ระยะ REM)"),
  G("Patient factors: comorbidity, anatomy, preference. Lifestyle factors: frequent travel, shift work, no mains power may favour oral appliance or surgery over PAP.","ปัจจัยผู้ป่วย: โรคร่วม โครงสร้าง ความต้องการ ปัจจัยวิถีชีวิต: เดินทางบ่อย ทำงานเป็นกะ ไฟฟ้าไม่สะดวก อาจเหมาะกับอุปกรณ์ในช่องปากหรือผ่าตัดมากกว่า PAP"),
