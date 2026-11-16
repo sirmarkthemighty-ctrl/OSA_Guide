@@ -72,8 +72,13 @@ label.ck input.sw::after{content:"";position:absolute;top:2px;left:2px;width:18p
 label.ck input.sw:checked{background:#4f46e5}
 label.ck input.sw:checked::after{transform:translateX(18px)}
 .strip{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0 2px}.strip .chip{font-size:11px;padding:2px 7px;margin:0}
+.handbox{max-width:780px;width:100%;max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px}
+.sheet{background:#fff;color:#111;border:1px solid #cbd5e1;border-radius:8px;padding:18px 20px;font-size:13.5px;line-height:1.55}.sheet h2{margin:0;font-size:22px;font-weight:800;color:#1e1b4b}.sheet .hsub{color:#475569;margin-bottom:8px}.sheet h3{margin:12px 0 3px;font-size:14px;font-weight:800;color:#3730a3;border-bottom:1px solid #c7d2fe;padding-bottom:2px}.sheet p{margin:0}.sheet ul{margin:2px 0;padding-left:20px}.sheet li{margin:2px 0}
+.sheet .hbox{border:1.5px solid #4f46e5;border-radius:8px;padding:8px 12px;margin:6px 0;background:#eef2ff}.sheet .hr{margin:2px 0}
+.sheet .pl{display:flex;flex-wrap:wrap;gap:4px 18px;margin:4px 0}.sheet .ln2{margin:10px 0 0}.sheet .hfoot{margin-top:12px;font-size:11px;color:#475569;border-top:1px solid #cbd5e1;padding-top:6px}
 .sumbox{max-width:560px;width:100%}.sumpre{white-space:pre-wrap;word-break:break-word;font:12px/1.5 ui-monospace,Consolas,monospace;background:var(--inset);border:1px solid var(--bd);border-radius:10px;padding:10px;margin:0 0 8px;max-height:55vh;overflow:auto}
-@media print{.wrap>*:not(.sumwrap),.noprint{display:none!important}.modal.sumwrap{position:static;background:none;backdrop-filter:none;padding:0;display:block}.sumbox{max-width:none}.sumpre{max-height:none;overflow:visible;border:0;background:none;color:#000}body{background:#fff}}
+@page{size:A4;margin:12mm}
+@media print{.wrap>*:not(.sumwrap):not(.handwrap),.noprint{display:none!important}.modal.sumwrap,.modal.handwrap{position:static;background:none;backdrop-filter:none;padding:0;display:block}.handbox{max-height:none;overflow:visible;border:0;padding:0;background:none}.sheet{border:0;padding:0;font-size:12px;line-height:1.45}.sheet h2{font-size:20px}.sumbox{max-width:none}.sumpre{max-height:none;overflow:visible;border:0;background:none;color:#000}body{background:#fff}}
 details.b{scroll-margin-top:calc(var(--navh,56px) + 52px)}
 details.b>summary .sm{display:flex;gap:10px;align-items:center;min-width:0;flex:1}.ico{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
 .st{display:flex;flex-direction:column;min-width:0}.st small{font-weight:500;font-size:11px;color:var(--mu);line-height:1.35;margin-top:2px}
@@ -115,7 +120,7 @@ const DONATE={qr:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAQDAwQ
  th:{btn:'สนับสนุน',title:'สนับสนุนคู่มือนี้',close:'ปิด',alt:'QR พร้อมเพย์สำหรับสนับสนุนผู้พัฒนา',intro:'คู่มือนี้ใช้ได้ฟรี หากเป็นประโยชน์ต่อการทำงาน สามารถสนับสนุนการพัฒนาได้โดยสแกน QR พร้อมเพย์นี้ด้วยแอปธนาคาร',scan:'สแกนด้วยแอปธนาคารของไทย (พร้อมเพย์ / Thai QR Payment)',note:'การสนับสนุนเป็นความสมัครใจ และไม่มีผลต่อเนื้อหาของคู่มือ'}};
 const HEART='<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>';
 let donateOpen=false;
-let confirmNew=false,body={},summaryOpen=false,pap={},fromCheck=null,sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin','map','src0','src1','src2','src3','src4']),modal=null;
+let handOpen=false,handLang='en',confirmNew=false,body={},summaryOpen=false,pap={},fromCheck=null,sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin','map','src0','src1','src2','src3','src4']),modal=null;
 try{lang=localStorage.getItem('osa-lang')||'en';checks=JSON.parse(localStorage.getItem('osa-checks')||'{}')}catch(e){}
 const t=o=>o[lang]||o.en;
 const save=()=>{try{localStorage.setItem('osa-checks',JSON.stringify(checks));localStorage.setItem('osa-lang',lang)}catch(e){}};
@@ -239,7 +244,11 @@ function essRes(){
 const ESSTXT=[a('Normal daytime sleepiness (0–10)','ง่วงกลางวันปกติ (0–10)'),a('Mild excessive sleepiness (11–12)','ง่วงมากผิดปกติเล็กน้อย (11–12)'),a('Moderate excessive sleepiness (13–15)','ง่วงมากผิดปกติปานกลาง (13–15)'),a('Severe excessive sleepiness (16–24)','ง่วงมากผิดปกติรุนแรง (16–24)')];
 
 /* ---------- PSG ---------- */
-const PF=[['tst',a('Total sleep time (h)','เวลานอนหลับรวม (ชม.)')],['oa',a('Obstructive + mixed apnoeas (n)','obstructive + mixed apnoea (ครั้ง)')],['ca',a('Central apnoeas (n)','central apnoea (ครั้ง)')],['hy',a('Hypopnoeas (n)','hypopnoea (ครั้ง)')],['nad',a('SpO₂ nadir (%)','SpO₂ ต่ำสุด (%)')],['t90',a('Time SpO₂ < 90 % (% of TST)','เวลา SpO₂ < 90 % (% ของ TST)')],['sup',a('Supine AHI','AHI ท่านอนหงาย')],['non',a('Non-supine AHI','AHI ท่านอื่น')]];
+/* extra sleep-test fields: [key, label, shown in lab/portable PSG only] */
+const PF2=[['rera',a("RERAs (n)","RERA (ครั้ง)"),1],['tib',a("Time in bed (h)","เวลาอยู่บนเตียง (ชม.)"),1],['rem',a("REM AHI","AHI ช่วง REM"),1],['nrem',a("NREM AHI","AHI ช่วง NREM"),1],['odi',a("ODI (/h)","ODI (/ชม.)"),0],['arx',a("Arousal index (/h)","arousal index (/ชม.)"),1]];
+const PTLAB=a("Total sleep time (h)","เวลานอนหลับรวม (ชม.)"),HTLAB=a("Monitoring time (h)","เวลาที่บันทึก (ชม.)");
+const isHome=()=>psg.ttype==='home';
+const PF=[['tst',a('Total sleep time (h)','เวลานอนหลับรวม (ชม.)')],['oa',a('Obstructive + mixed apnoeas (n)','obstructive + mixed apnoea (ครั้ง)')],['ca',a('Central apnoeas (n)','central apnoea (ครั้ง)')],['hy',a('Hypopnoeas (n)','hypopnoea (ครั้ง)')],['nad',a('SpO₂ nadir (%)','SpO₂ ต่ำสุด (%)')],['t90',a('Time SpO₂ < 90 % (% of time)','เวลา SpO₂ < 90 % (% ของเวลา)')],['sup',a('Supine AHI','AHI ท่านอนหงาย')],['non',a('Non-supine AHI','AHI ท่านอื่น')]];
 const num=v=>(v===''||v==null||isNaN(+v))?null:+v;
 function psgOut(){
  const g=k=>num(psg[k]);
@@ -249,8 +258,9 @@ function psgOut(){
  let ahi=null;
  if(tst&&tst>0&&ev.every(v=>v!==null)){ahi=(oa+ca+hy)/tst}
  const mk=(c,txt)=>`<div class="res ${c}">${txt}</div>`;
+ const P=psgNums(),LB=P.home?'REI':'AHI';
  if(ahi===null){
-  head=mk('slate',`<b>AHI N/A</b><small>${t(a('Enter total sleep time, apnoeas and hypopnoeas. For a home test use recording time instead of sleep time (it is then REI / pAHI, which under-reads AHI).','ใส่เวลานอนหลับรวม จำนวน apnoea และ hypopnoea ถ้าเป็น home test ใช้เวลาบันทึกแทน (เรียก REI / pAHI ซึ่งมักต่ำกว่า AHI จริง)'))}</small>`);
+  head=mk('slate',`<b>${LB} N/A</b><small>${t(a('Enter total sleep time, apnoeas and hypopnoeas. For a home test use recording time instead of sleep time (it is then REI / pAHI, which under-reads AHI).','ใส่เวลานอนหลับรวม จำนวน apnoea และ hypopnoea ถ้าเป็น home test ใช้เวลาบันทึกแทน (เรียก REI / pAHI ซึ่งมักต่ำกว่า AHI จริง)'))}</small>`);
  }else{
   const sev=ahi<5?0:ahi<15?1:ahi<30?2:3;
   const c=['emerald','amber','orange','rose'][sev];
@@ -258,12 +268,19 @@ function psgOut(){
   const cen=ca/(oa+ca+hy||1)*100;
   let ex=`${t(a('Events','เหตุการณ์'))}: ${oa+ca+hy} / ${tst} h`;
   if(oa+ca+hy>0)ex+=` · ${t(a('central share','สัดส่วน central'))} ${cen.toFixed(0)} %`;
-  head=mk(c,`<b>AHI ${ahi.toFixed(1)} /h</b> — ${t(nm)}<small>${ex}</small>`);
+  head=mk(c,`<b>${LB} ${ahi.toFixed(1)} /h</b> — ${t(nm)}<small>${ex}</small>`);
+  if(P.home)lines.push(t(a('Home test: REI is events per hour of monitoring time and can under-read the AHI. If it is negative, inconclusive or technically poor, do an in-lab PSG (AASM, strong).','Home test: REI คือจำนวนเหตุการณ์ต่อชั่วโมงที่บันทึกและอาจต่ำกว่า AHI จริง ถ้าผลลบ สรุปไม่ได้ หรือคุณภาพไม่ดี ให้ทำ PSG ในห้องปฏิบัติการ (AASM strong)')));
+  if(P.rdi!==null)lines.push('<span class="chip indigo">RDI '+P.rdi.toFixed(1)+' /h</span>'+t(a('events plus RERAs per hour of sleep','เหตุการณ์รวม RERA ต่อชั่วโมงการหลับ')));
+  if(P.se!==null)lines.push('<span class="chip slate">'+t(a('Sleep efficiency','ประสิทธิภาพการนอน'))+' '+P.se.toFixed(0)+' %</span>'+t(a('time asleep ÷ time in bed','เวลาหลับ ÷ เวลาบนเตียง')));
   if(ca>=5&&cen>50)lines.push(t(a('Central events > 50 % of events and ≥ 5/h: central sleep apnoea pattern — look for heart failure, opioids, stroke, high altitude; CPAP alone may not suffice, consider specialist review.','central > 50 % ของเหตุการณ์ และ ≥ 5/ชม.: รูปแบบ central sleep apnoea — หาสาเหตุ HF, opioid, stroke, ที่สูง; CPAP อย่างเดียวอาจไม่พอ ควรปรึกษาผู้เชี่ยวชาญ')));
   else if(ca>=5)lines.push(t(a('Central apnoeas ≥ 5/h but < 50 % of events: mixed picture; recheck on CPAP (treatment-emergent central apnoea).','central apnoea ≥ 5/ชม. แต่ < 50 %: ภาพผสม; ประเมินซ้ำหลังเริ่ม CPAP (treatment-emergent central apnoea)')));
   if(sev===0)lines.push(t(a('AHI < 5 with typical symptoms: consider UARS (RERA-based), repeat study, or other sleep disorders.','AHI < 5 แต่อาการเข้าได้: นึกถึง UARS (นับ RERA) ตรวจซ้ำ หรือโรคการนอนอื่น')));
  }
  const nad=g('nad'),t90=g('t90'),sup=g('sup'),non=g('non');
+ if(P.remPred)lines.push(t(a('REM-predominant pattern: REM AHI is at least twice the NREM AHI (a common convention). The Thai guideline suggests sleep hygiene or APAP may suit REM-related OSA.','รูปแบบเด่นในช่วง REM: AHI ช่วง REM ≥ 2 เท่าของช่วง NREM (เกณฑ์ที่ใช้กันทั่วไป) แนวทางไทยแนะนำสุขอนามัยการนอนหรือ APAP สำหรับ REM-related OSA')));
+ if(P.odi!==null)lines.push('<span class="chip sky">ODI '+P.odi+' /h</span>'+(ahi!==null&&P.odi>=ahi*1.5?t(a('well above the '+LB+': check which desaturation rule each uses','สูงกว่า '+LB+' มาก: ตรวจว่าแต่ละค่าใช้เกณฑ์ desaturation ใด')):t(a('oxygen desaturation index','ดัชนี oxygen desaturation'))));
+ if(P.arx!==null)lines.push('<span class="chip slate">'+t(a('Arousal index','arousal index'))+' '+P.arx+' /h</span>');
+ if(P.rule)lines.push(t(a('Hypopnoea rule used: '+(P.rule==='A'?'A (AASM: ≥ 30 % flow drop with ≥ 3 % desaturation or an arousal)':'B (CMS: ≥ 30 % flow drop with ≥ 4 % desaturation)')+'. Compare results only between studies that used the same rule.','เกณฑ์ hypopnoea ที่ใช้: '+(P.rule==='A'?'A (AASM: ลมลด ≥ 30 % ร่วมกับ desaturation ≥ 3 % หรือ arousal)':'B (CMS: ลมลด ≥ 30 % ร่วมกับ desaturation ≥ 4 %)')+' เปรียบเทียบผลระหว่างการตรวจที่ใช้เกณฑ์เดียวกันเท่านั้น')));
  if(nad!==null){
   const lv=nad>=90?[a('no desaturation','ไม่มี desaturation'),'emerald']:nad>=85?[a('mild desaturation (85–89 %)','desaturation เล็กน้อย (85–89 %)'),'amber']:nad>=80?[a('moderate (80–84 %)','ปานกลาง (80–84 %)'),'orange']:[a('severe (< 80 %)','รุนแรง (< 80 %)'),'rose'];
   lines.push(`<span class="chip ${lv[1]}">SpO₂ ${nad} %</span>${t(lv[0])} <span class="note">${t(a('(common grading, not an AASM definition)','(เกณฑ์ที่ใช้กันทั่วไป ไม่ใช่นิยาม AASM)'))}</span>`);
@@ -275,7 +292,7 @@ function psgOut(){
   else lines.push(t(a('Not position-dependent.','ไม่ขึ้นกับท่านอน')));
  }
  const na=[];
- PF.forEach(([k,l])=>{if(g(k)===null)na.push(t(l))});
+ PF.forEach(([k,l])=>{if(g(k)===null)na.push(t(k==='tst'?(P.home?HTLAB:PTLAB):l))});
  const miss=na.length?`<div class="note" style="margin-top:8px">N/A: ${na.join(', ')}</div>`:'';
  return head+(lines.length?`<ul style="margin-top:8px">${lines.map(l=>`<li>${l}</li>`).join('')}</ul>`:'')+miss;
 }
@@ -411,7 +428,7 @@ const TX=[
 TX[0][2].push(G("Endotypes (PALM): collapsible airway (PAP, oral appliance, surgery); low arousal threshold (a sleep-promoting drug may be considered if SpO₂ is not low); high loop gain (some drugs or added oxygen); weak airway-muscle response (myofunctional therapy, upper-airway stimulation).","Endotype (PALM): ทางเดินหายใจยุบง่าย (PAP อุปกรณ์ในช่องปาก ผ่าตัด); arousal threshold ต่ำ (อาจพิจารณายาช่วยหลับถ้า SpO₂ ไม่ต่ำ); loop gain สูง (ยาบางชนิดหรือให้ออกซิเจนเสริม); กล้ามเนื้อตอบสนองน้อย (ฝึกกล้ามเนื้อ กระตุ้นทางเดินหายใจส่วนบน)"),
  G("Patient profile: women, younger patients and low BMI may do well with an oral appliance or minimally invasive procedures; middle-aged men with high BMI may benefit more from PAP.","ลักษณะผู้ป่วย: เพศหญิง อายุน้อย BMI ต่ำ อาจได้ประโยชน์จากอุปกรณ์ในช่องปากหรือหัตถการรุกล้ำน้อย ส่วนชายวัยกลางคนที่ BMI สูงอาจได้ประโยชน์จาก PAP มากกว่า"),
  G("Baveno classification (used mainly in Europe): sorts patients into four groups by sleepiness and significant comorbidity, to plan treatment. Significant comorbidities named: heart failure, coronary disease, arrhythmia, refractory hypertension, pulmonary hypertension, COPD, refractory asthma, stroke, kidney failure, diabetes, depression, muscular dystrophy, drug addiction.","Baveno classification (นิยมในยุโรป): แบ่งผู้ป่วยเป็น 4 กลุ่มตามความง่วงและโรคร่วมสำคัญ เพื่อวางแผนการรักษา โรคร่วมสำคัญที่ระบุ: หัวใจล้มเหลว โรคหลอดเลือดหัวใจ หัวใจเต้นผิดจังหวะ ความดันสูงที่ดื้อต่อการรักษา ความดันปอดสูง COPD หืดที่คุมไม่ได้ หลอดเลือดสมอง ไตวาย เบาหวาน ซึมเศร้า โรคกล้ามเนื้อลีบ การติดยาเสพติด"));
-const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)'),a('Berlin Questionnaire (3 categories, 9 scored items).','เพิ่มแบบสอบถาม Berlin (3 หมวด 9 ข้อที่นับคะแนน)'),a('Thai guideline read in full: added its low/high-risk definition with the "treat as high risk" list, more checklist risk factors, endotypes, Baveno classification, inconclusive-study causes, wearables note, Thai prevalence.','อ่านแนวทางไทยครบทั้งฉบับ: เพิ่มนิยามความเสี่ยงต่ำ/สูงพร้อมรายการที่ถือเป็นกลุ่มเสี่ยงสูง ปัจจัยเสี่ยงในเช็กลิสต์เพิ่มเติม endotype การจัดกลุ่ม Baveno สาเหตุของผลตรวจสรุปไม่ได้ หมายเหตุอุปกรณ์สวมใส่ และความชุกในไทย'),a('Complications of OSA block (cardiovascular, metabolic, safety, mood, respiratory, perioperative, pregnancy, effect of treatment) in the Checklist tab.','เพิ่มกรอบภาวะแทรกซ้อนของ OSA (หัวใจหลอดเลือด เมแทบอลิก ความปลอดภัย อารมณ์ ระบบหายใจ ช่วงผ่าตัด ตั้งครรภ์ ผลของการรักษา) ในแท็บเช็กลิสต์'),a('New Treatment blocks: PAP problems and fixes, central sleep apnoea (AASM 2025) and obesity hypoventilation (ATS 2019).','เพิ่มกรอบการรักษา: ปัญหาการใช้ PAP และวิธีแก้ central sleep apnoea (AASM 2025) และ obesity hypoventilation (ATS 2019)'),a('Body-measurement helper for STOP-Bang, all entries are kept on the device with a New patient button, larger touch areas, darker secondary text and a page language tag.','ตัวช่วยค่าร่างกายสำหรับ STOP-Bang เก็บข้อมูลที่กรอกไว้ในอุปกรณ์พร้อมปุ่มผู้ป่วยใหม่ ขยายพื้นที่แตะ ปรับสีข้อความรองให้เข้มขึ้น และกำหนดภาษาของหน้า'),a('References on the Sources tab are grouped by topic (Thai guideline, AASM guidelines, screening questionnaires, trials and drug labels).','รายการอ้างอิงในแท็บอ้างอิงจัดกลุ่มตามหัวข้อ (แนวทางไทย แนวทาง AASM แบบสอบถามคัดกรอง การศึกษาและฉลากยา)'),a('Treatment tab rebuilt: pathway map, sticky jump bar, groups, icons, one-line summaries, evidence badges, source filter, comparison table, route prompt, long lines split.','ปรับแท็บการรักษาใหม่: แผนผังเส้นทาง แถบกระโดดที่ติดหน้าจอ การจัดกลุ่ม ไอคอน สรุปบรรทัดเดียว ป้ายหลักฐาน ตัวกรองแหล่งที่มา ตารางเปรียบเทียบ ข้อเสนอแนะเส้นทาง และแบ่งบรรทัดยาว'),a('Results strip with a Summary button (copy or print a chart note) and a PAP follow-up check in the Treatment tab.','แถบผลคะแนนพร้อมปุ่มสรุป (คัดลอกหรือพิมพ์เป็นบันทึก) และตัวตรวจติดตามการใช้ PAP ในแท็บการรักษา'),a('Donate button (heart, with PromptPay QR pop-up) in the header.','เพิ่มปุ่มสนับสนุน (รูปหัวใจ พร้อม QR พร้อมเพย์) ที่ส่วนหัว'),a('Checklist is a prompt only (no risk level) and has a "Use in scores" button that copies matching ticks into STOP-Bang and Berlin.','เช็กลิสต์เป็นเพียงตัวช่วยเตือน (ไม่แสดงระดับความเสี่ยง) และมีปุ่ม "ใช้ในคะแนน" คัดลอกข้อที่ตรงไปยัง STOP-Bang และ Berlin'),a('AASM guideline recommendations (diagnosis 2017, PAP 2019, oral appliance 2015, surgical referral 2021) added with strength ratings and AASM marks.','เพิ่มคำแนะนำจากแนวทาง AASM (การวินิจฉัย 2017, PAP 2019, อุปกรณ์ในช่องปาก 2015, การส่งต่อผ่าตัด 2021) พร้อมระดับน้ำหนักและเครื่องหมาย AASM'),a('Added the 2025 Thai adult snoring/OSA guideline (Thai Snoring and Sleep Apnea Society, RCOT), merged into the existing tabs (screening notes, test choice and definitions, treatment blocks, follow-up) with TH marks, including surgery, upper-airway investigations, myofunctional therapy and other devices.','เพิ่มแนวทางไทยสำหรับผู้ใหญ่ พ.ศ. 2568 (สมาคมโรคนอนกรนและหยุดหายใจขณะหลับ ราชวิทยาลัย โสต ศอ นาสิกแพทย์ฯ) โดยรวมเข้ากับแท็บเดิม (หมายเหตุการคัดกรอง การเลือกตรวจและนิยาม กรอบการรักษา การติดตาม) พร้อมเครื่องหมาย TH รวมถึงการผ่าตัด การตรวจทางเดินหายใจส่วนบน การฝึกกล้ามเนื้อ และอุปกรณ์อื่น'),a('Look matched to the Bronchodilator Guide (Bedside UI): slate and indigo palette, tinted guide tiles, round theme button.','ปรับหน้าตาให้ตรงกับ Bronchodilator Guide (Bedside UI): โทนสี slate และ indigo ปุ่มนำทางสีอ่อน ปุ่มธีมกลม')]]];
+const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)'),a('Berlin Questionnaire (3 categories, 9 scored items).','เพิ่มแบบสอบถาม Berlin (3 หมวด 9 ข้อที่นับคะแนน)'),a('Thai guideline read in full: added its low/high-risk definition with the "treat as high risk" list, more checklist risk factors, endotypes, Baveno classification, inconclusive-study causes, wearables note, Thai prevalence.','อ่านแนวทางไทยครบทั้งฉบับ: เพิ่มนิยามความเสี่ยงต่ำ/สูงพร้อมรายการที่ถือเป็นกลุ่มเสี่ยงสูง ปัจจัยเสี่ยงในเช็กลิสต์เพิ่มเติม endotype การจัดกลุ่ม Baveno สาเหตุของผลตรวจสรุปไม่ได้ หมายเหตุอุปกรณ์สวมใส่ และความชุกในไทย'),a('Complications of OSA block (cardiovascular, metabolic, safety, mood, respiratory, perioperative, pregnancy, effect of treatment) in the Checklist tab.','เพิ่มกรอบภาวะแทรกซ้อนของ OSA (หัวใจหลอดเลือด เมแทบอลิก ความปลอดภัย อารมณ์ ระบบหายใจ ช่วงผ่าตัด ตั้งครรภ์ ผลของการรักษา) ในแท็บเช็กลิสต์'),a('New Treatment blocks: PAP problems and fixes, central sleep apnoea (AASM 2025) and obesity hypoventilation (ATS 2019).','เพิ่มกรอบการรักษา: ปัญหาการใช้ PAP และวิธีแก้ central sleep apnoea (AASM 2025) และ obesity hypoventilation (ATS 2019)'),a('Printable patient handout (A4, Thai or English) with a results box filled from the entries, and a Copy text button.','เอกสารสำหรับผู้ป่วยที่พิมพ์ได้ (A4 ภาษาไทยหรืออังกฤษ) พร้อมกล่องผลการตรวจที่เติมจากข้อมูลที่กรอก และปุ่มคัดลอกข้อความ'),a('Sleep-test inputs: lab PSG or home test (AHI or REI), RERA and RDI, REM and NREM AHI, ODI, arousal index, sleep efficiency and the hypopnoea rule used.','ข้อมูลการตรวจการนอนละเอียดขึ้น: PSG หรือ home test (AHI หรือ REI) RERA และ RDI AHI ช่วง REM และ NREM ODI arousal index ประสิทธิภาพการนอน และเกณฑ์ hypopnoea'),a('Body-measurement helper for STOP-Bang, all entries are kept on the device with a New patient button, larger touch areas, darker secondary text and a page language tag.','ตัวช่วยค่าร่างกายสำหรับ STOP-Bang เก็บข้อมูลที่กรอกไว้ในอุปกรณ์พร้อมปุ่มผู้ป่วยใหม่ ขยายพื้นที่แตะ ปรับสีข้อความรองให้เข้มขึ้น และกำหนดภาษาของหน้า'),a('References on the Sources tab are grouped by topic (Thai guideline, AASM guidelines, screening questionnaires, trials and drug labels).','รายการอ้างอิงในแท็บอ้างอิงจัดกลุ่มตามหัวข้อ (แนวทางไทย แนวทาง AASM แบบสอบถามคัดกรอง การศึกษาและฉลากยา)'),a('Treatment tab rebuilt: pathway map, sticky jump bar, groups, icons, one-line summaries, evidence badges, source filter, comparison table, route prompt, long lines split.','ปรับแท็บการรักษาใหม่: แผนผังเส้นทาง แถบกระโดดที่ติดหน้าจอ การจัดกลุ่ม ไอคอน สรุปบรรทัดเดียว ป้ายหลักฐาน ตัวกรองแหล่งที่มา ตารางเปรียบเทียบ ข้อเสนอแนะเส้นทาง และแบ่งบรรทัดยาว'),a('Results strip with a Summary button (copy or print a chart note) and a PAP follow-up check in the Treatment tab.','แถบผลคะแนนพร้อมปุ่มสรุป (คัดลอกหรือพิมพ์เป็นบันทึก) และตัวตรวจติดตามการใช้ PAP ในแท็บการรักษา'),a('Donate button (heart, with PromptPay QR pop-up) in the header.','เพิ่มปุ่มสนับสนุน (รูปหัวใจ พร้อม QR พร้อมเพย์) ที่ส่วนหัว'),a('Checklist is a prompt only (no risk level) and has a "Use in scores" button that copies matching ticks into STOP-Bang and Berlin.','เช็กลิสต์เป็นเพียงตัวช่วยเตือน (ไม่แสดงระดับความเสี่ยง) และมีปุ่ม "ใช้ในคะแนน" คัดลอกข้อที่ตรงไปยัง STOP-Bang และ Berlin'),a('AASM guideline recommendations (diagnosis 2017, PAP 2019, oral appliance 2015, surgical referral 2021) added with strength ratings and AASM marks.','เพิ่มคำแนะนำจากแนวทาง AASM (การวินิจฉัย 2017, PAP 2019, อุปกรณ์ในช่องปาก 2015, การส่งต่อผ่าตัด 2021) พร้อมระดับน้ำหนักและเครื่องหมาย AASM'),a('Added the 2025 Thai adult snoring/OSA guideline (Thai Snoring and Sleep Apnea Society, RCOT), merged into the existing tabs (screening notes, test choice and definitions, treatment blocks, follow-up) with TH marks, including surgery, upper-airway investigations, myofunctional therapy and other devices.','เพิ่มแนวทางไทยสำหรับผู้ใหญ่ พ.ศ. 2568 (สมาคมโรคนอนกรนและหยุดหายใจขณะหลับ ราชวิทยาลัย โสต ศอ นาสิกแพทย์ฯ) โดยรวมเข้ากับแท็บเดิม (หมายเหตุการคัดกรอง การเลือกตรวจและนิยาม กรอบการรักษา การติดตาม) พร้อมเครื่องหมาย TH รวมถึงการผ่าตัด การตรวจทางเดินหายใจส่วนบน การฝึกกล้ามเนื้อ และอุปกรณ์อื่น'),a('Look matched to the Bronchodilator Guide (Bedside UI): slate and indigo palette, tinted guide tiles, round theme button.','ปรับหน้าตาให้ตรงกับ Bronchodilator Guide (Bedside UI): โทนสี slate และ indigo ปุ่มนำทางสีอ่อน ปุ่มธีมกลม')]]];
 
 /* ---------- render ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -476,9 +493,14 @@ function donateModal(){
 const STOPN=[a("Snoring","กรน"),a("Tired","เหนื่อย/ง่วง"),a("Observed apnoea","มีคนเห็นหยุดหายใจ"),a("Pressure","ความดันสูง"),a("BMI","BMI"),a("Age > 50","อายุ > 50"),a("Neck > 40 cm","รอบคอ > 40"),a("Male","เพศชาย")];
 const SEVN=[a("Normal","ปกติ"),a("Mild","เล็กน้อย"),a("Moderate","ปานกลาง"),a("Severe","รุนแรง")];
 function psgNums(){
- const g=k=>num(psg[k]);const tst=g('tst'),oa=g('oa'),ca=g('ca'),hy=g('hy');
- const o={tst,nad:g('nad'),t90:g('t90'),sup:g('sup'),non:g('non'),ahi:null};
- if(tst&&tst>0&&oa!==null&&ca!==null&&hy!==null){o.ahi=(oa+ca+hy)/tst;o.sev=o.ahi<5?0:o.ahi<15?1:o.ahi<30?2:3;o.cen=(oa+ca+hy)?ca/(oa+ca+hy)*100:0}
+ const g=k=>num(psg[k]);const tst=g('tst'),oa=g('oa'),ca=g('ca'),hy=g('hy'),home=isHome();
+ const o={tst,nad:g('nad'),t90:g('t90'),sup:g('sup'),non:g('non'),home,ahi:null,rdi:null,se:null,rem:home?null:g('rem'),nrem:home?null:g('nrem'),odi:g('odi'),arx:home?null:g('arx'),rule:psg.rule||''};
+ if(tst&&tst>0&&oa!==null&&ca!==null&&hy!==null){
+  o.ahi=(oa+ca+hy)/tst;o.sev=o.ahi<5?0:o.ahi<15?1:o.ahi<30?2:3;o.cen=(oa+ca+hy)?ca/(oa+ca+hy)*100:0;
+  const rr=home?null:g('rera');if(rr!==null)o.rdi=(oa+ca+hy+rr)/tst;
+  const tb=home?null:g('tib');if(tb&&tb>0)o.se=tst/tb*100;
+ }
+ o.remPred=o.rem!==null&&o.nrem!==null&&o.rem>=5&&o.rem>=2*o.nrem;
  return o;
 }
 const SEVC=['emerald','amber','orange','rose'];
@@ -491,9 +513,9 @@ function strip(){
  if(anyStop){const r=stopRisk();chips.push([r.c,'STOP-Bang '+r.n+'/8'])}
  const e=essRes();if(e)chips.push([e.c,'ESS '+e.s+'/24']);
  const b=berRes();if(b.done)chips.push([b.n>=2?'rose':'emerald','Berlin '+b.n+'/3']);
- const p=psgNums();if(p.ahi!==null)chips.push([SEVC[p.sev],'AHI '+p.ahi.toFixed(1)]);
+ const p=psgNums();if(p.ahi!==null)chips.push([SEVC[p.sev],(p.home?'REI ':'AHI ')+p.ahi.toFixed(1)]);
  const tot=Object.keys(checks).length;if(tot)chips.push(['slate',tot+'/'+GROUPS.reduce((n,g)=>n+g[3].length,0)+' '+t(a("ticked","ติ๊ก"))]);
- return '<div class="strip">'+(chips.length?chips.map(([c,x])=>'<span class="chip '+c+'">'+x+'</span>').join(''):'<span class="note">'+t(a("No scores yet","ยังไม่มีคะแนน"))+'</span>')+(confirmNew?'<span class="note" style="font-weight:700;color:var(--tx)">'+t(a('Clear all entries?','ล้างข้อมูลที่กรอกทั้งหมด?'))+'</span><button class="btn" data-act="newyes" style="color:#be123c;border-color:#be123c">'+t(a('Yes, clear','ใช่ ล้าง'))+'</button><button class="btn" data-act="newno">'+t(a('Cancel','ยกเลิก'))+'</button>':'<button class="btn" data-act="newpt" title="'+t(a('Clear every entry for a new patient. Entries are saved only in this browser.','ล้างข้อมูลทั้งหมดสำหรับผู้ป่วยรายใหม่ ข้อมูลถูกบันทึกในเบราว์เซอร์นี้เท่านั้น'))+'">'+t(a('New patient','ผู้ป่วยใหม่'))+'</button>')+'<button class="btn" data-act="summary" style="margin-left:auto;color:var(--ac);border-color:var(--ac)">'+t(a('Summary','สรุป'))+'</button></div>';
+ return '<div class="strip">'+(chips.length?chips.map(([c,x])=>'<span class="chip '+c+'">'+x+'</span>').join(''):'<span class="note">'+t(a("No scores yet","ยังไม่มีคะแนน"))+'</span>')+(confirmNew?'<span class="note" style="font-weight:700;color:var(--tx)">'+t(a('Clear all entries?','ล้างข้อมูลที่กรอกทั้งหมด?'))+'</span><button class="btn" data-act="newyes" style="color:#be123c;border-color:#be123c">'+t(a('Yes, clear','ใช่ ล้าง'))+'</button><button class="btn" data-act="newno">'+t(a('Cancel','ยกเลิก'))+'</button>':'<button class="btn" data-act="newpt" title="'+t(a('Clear every entry for a new patient. Entries are saved only in this browser.','ล้างข้อมูลทั้งหมดสำหรับผู้ป่วยรายใหม่ ข้อมูลถูกบันทึกในเบราว์เซอร์นี้เท่านั้น'))+'">'+t(a('New patient','ผู้ป่วยใหม่'))+'</button>')+'<button class="btn" data-act="hand" style="margin-left:auto">'+t(a('Handout','เอกสารผู้ป่วย'))+'</button><button class="btn" data-act="summary" style="color:var(--ac);border-color:var(--ac)">'+t(a('Summary','สรุป'))+'</button></div>';
 }
 function buildSummary(){
  const L=[],NA='N/A';
@@ -509,12 +531,67 @@ function buildSummary(){
  const b=berRes();L.push('Berlin: '+(b.done?b.n+'/3 '+t(a("categories positive","หมวดเป็นบวก"))+' — '+(b.n>=2?t(a("high risk","เสี่ยงสูง")):t(a("low risk","เสี่ยงต่ำ"))):NA));
  const p=psgNums();
  if(p.ahi!==null){const f=v=>v===null?NA:v;
-  L.push('PSG/sleep test: AHI '+p.ahi.toFixed(1)+'/h — '+t(SEVN[p.sev])+'; TST '+p.tst+' h; '+t(a("central share","สัดส่วน central"))+' '+p.cen.toFixed(0)+' %; SpO2 '+t(a("nadir","ต่ำสุด"))+' '+f(p.nad)+' %; T90 '+f(p.t90)+' %; '+t(a("supine / non-supine AHI","AHI ท่านอนหงาย / ท่านอื่น"))+' '+f(p.sup)+' / '+f(p.non));
+  L.push((p.home?'Home sleep test: REI ':'PSG: AHI ')+p.ahi.toFixed(1)+'/h — '+t(SEVN[p.sev])+'; '+(p.home?t(a('monitoring time','เวลาที่บันทึก')):'TST')+' '+p.tst+' h;'+(p.rdi!==null?' RDI '+p.rdi.toFixed(1)+'/h;':'')+(p.se!==null?' '+t(a('efficiency','ประสิทธิภาพ'))+' '+p.se.toFixed(0)+' %;':'')+(p.remPred?' '+t(a('REM-predominant','เด่นช่วง REM'))+' (REM '+p.rem+' / NREM '+p.nrem+');':'')+(p.odi!==null?' ODI '+p.odi+'/h;':'')+(p.arx!==null?' '+t(a('arousal index','arousal index'))+' '+p.arx+'/h;':'')+(p.rule?' '+t(a('hypopnoea rule','เกณฑ์ hypopnoea'))+' '+p.rule+';':'')+' '+t(a("central share","สัดส่วน central"))+' '+p.cen.toFixed(0)+' %; SpO2 '+t(a("nadir","ต่ำสุด"))+' '+f(p.nad)+' %; T90 '+f(p.t90)+' %; '+t(a("supine / non-supine AHI","AHI ท่านอนหงาย / ท่านอื่น"))+' '+f(p.sup)+' / '+f(p.non));
  }else L.push('PSG/sleep test: '+NA);
  if(Object.values(pap).some(v=>v!==''&&v!=null)){const f=k=>(pap[k]===''||pap[k]==null)?NA:pap[k];
   L.push(t(a("PAP follow-up","ติดตาม PAP"))+': '+t(a("use","ชั่วโมงใช้"))+' '+f('use')+' h/'+t(a("night","คืน"))+'; '+f('pct')+' % '+t(a("nights ≥ 4 h","คืนที่ ≥ 4 ชม."))+'; '+t(a("residual AHI","AHI ที่เหลือ"))+' '+f('rah')+'; '+t(a("leak","ลมรั่ว"))+' '+({ok:t(a("acceptable","ยอมรับได้")),high:t(a("high","สูง"))}[pap.leak]||NA)+'; '+t(a("sleepiness","ความง่วง"))+' '+({none:t(a("none","ไม่มี")),persists:t(a("persists","ยังมี"))}[pap.sl]||NA));
  }
  return L.join('\n');
+}
+/* ---------- patient handout (A4, EN or TH) ---------- */
+const HAND={
+ title:a("Living with sleep apnoea","อยู่กับโรคหยุดหายใจขณะหลับ"),
+ sub:a("Information for patients","ข้อมูลสำหรับผู้ป่วย"),
+ blocks:[
+  [a("What is sleep apnoea?","โรคหยุดหายใจขณะหลับคืออะไร"),'p',a("Obstructive sleep apnoea (OSA) means the throat narrows or closes during sleep, so breathing pauses or becomes shallow many times a night. Your brain wakes you briefly to breathe again. You may not remember it, but your sleep is broken and your oxygen level can drop.","โรคหยุดหายใจขณะหลับจากการอุดกั้น (OSA) คือภาวะที่ทางเดินหายใจส่วนบนแคบหรือปิดขณะหลับ ทำให้หยุดหายใจหรือหายใจแผ่วหลายครั้งในแต่ละคืน สมองจะตื่นขึ้นสั้นๆ เพื่อให้หายใจต่อ คุณอาจจำไม่ได้ แต่การนอนถูกรบกวนและระดับออกซิเจนอาจลดลง")],
+  [a("Why treat it?","ทำไมต้องรักษา"),'p',a("Untreated, OSA can cause daytime sleepiness, accidents (including when driving), poorer concentration and quality of life. It is linked with high blood pressure, irregular heartbeat, heart disease and stroke.","หากไม่รักษา OSA อาจทำให้ง่วงตอนกลางวัน เกิดอุบัติเหตุ (รวมถึงขณะขับรถ) สมาธิและคุณภาพชีวิตแย่ลง และสัมพันธ์กับความดันโลหิตสูง หัวใจเต้นผิดจังหวะ โรคหัวใจ และโรคหลอดเลือดสมอง")],
+  [a("What you can do","สิ่งที่ทำได้"),'ul',[
+   a("Go to bed and get up at regular times, and sleep at least 7 hours.","เข้านอนและตื่นเป็นเวลา และนอนอย่างน้อย 7 ชั่วโมง"),
+   a("Avoid alcohol, sleeping pills and other sedatives close to bedtime, unless your doctor has told you to take them.","หลีกเลี่ยงแอลกอฮอล์ ยานอนหลับ และยากดประสาทอื่นๆ ใกล้เวลานอน เว้นแต่แพทย์สั่ง"),
+   a("If you are overweight, losing weight helps. A supervised diet and exercise programme works better than advice alone.","ถ้าน้ำหนักเกิน การลดน้ำหนักช่วยได้ โปรแกรมอาหารและออกกำลังกายที่มีผู้ดูแลได้ผลดีกว่าคำแนะนำอย่างเดียว"),
+   a("Sleep on your side if your doctor says your breathing problems happen mostly when you lie on your back.","นอนตะแคงถ้าแพทย์บอกว่าปัญหาการหายใจเกิดเมื่อนอนหงายเป็นหลัก"),
+   a("Treat a blocked nose, for example from allergy, and do not smoke.","รักษาอาการคัดจมูก เช่น จากภูมิแพ้ และไม่สูบบุหรี่")]],
+  [a("If you use a CPAP machine","ถ้าคุณใช้เครื่อง CPAP"),'ul',[
+   a("Use it every night and all night. The goal is at least 4 hours a night, on more than 7 nights out of 10. More is better.","ใช้ทุกคืนและตลอดคืน เป้าหมายคืออย่างน้อย 4 ชั่วโมงต่อคืน และใช้มากกว่า 7 คืนใน 10 คืน ยิ่งใช้นานยิ่งดี"),
+   a("Do not stop because you feel better. The machine controls the problem only while you use it.","อย่าหยุดใช้เพราะรู้สึกดีขึ้น เครื่องควบคุมปัญหาได้เฉพาะเมื่อใช้งาน"),
+   a("A leaking mask, dry mouth or nose, skin marks or a blocked nose are common and can usually be fixed (refitting the mask, a heated humidifier, a chin strap, nose treatment). Tell your clinic early instead of stopping.","หน้ากากรั่ว ปากหรือจมูกแห้ง รอยกดที่ผิว หรือคัดจมูก พบได้บ่อยและมักแก้ได้ (ปรับหน้ากาก ใช้เครื่องทำความชื้น สายรัดคาง รักษาจมูก) แจ้งคลินิกแต่เนิ่นๆ แทนการหยุดใช้"),
+   a("Clean the mask and humidifier as the maker advises, and bring the machine or its data card to your visits.","ทำความสะอาดหน้ากากและเครื่องทำความชื้นตามคำแนะนำของผู้ผลิต และนำเครื่องหรือการ์ดข้อมูลมาทุกครั้งที่นัด")]],
+  [a("Driving and safety","การขับรถและความปลอดภัย"),'p',a("Do not drive or use machinery when you feel sleepy. If sleepiness comes on while driving, stop in a safe place and rest. Tell your doctor if you have nearly had an accident.","ห้ามขับรถหรือใช้เครื่องจักรเมื่อรู้สึกง่วง ถ้าง่วงขณะขับรถ ให้จอดในที่ปลอดภัยและพัก แจ้งแพทย์หากเกือบเกิดอุบัติเหตุ")],
+  [a("Follow-up","การติดตามผล"),'p',a("You will be reviewed within the first 1–2 months of treatment and then at least once a year. Come sooner if your symptoms return, your weight changes a lot, or you have new health problems.","คุณจะได้รับการติดตามภายใน 1–2 เดือนแรกของการรักษา และอย่างน้อยปีละครั้ง มาก่อนนัดถ้าอาการกลับมา น้ำหนักเปลี่ยนมาก หรือมีโรคใหม่")]],
+ plan:a("Your plan (tick with your doctor)","แผนการรักษาของคุณ (ติ๊กร่วมกับแพทย์)"),
+ planItems:[a("CPAP / PAP machine","เครื่อง CPAP / PAP"),a("Oral appliance (from a dentist)","อุปกรณ์ในช่องปาก (จากทันตแพทย์)"),a("Weight loss","ลดน้ำหนัก"),a("Sleep on your side","นอนตะแคง"),a("Nose treatment","รักษาจมูก"),a("Referral (surgery or sleep specialist)","ส่งต่อ (ผ่าตัดหรือผู้เชี่ยวชาญด้านการนอน)"),a("Other:","อื่นๆ:")],
+ clinic:a("Clinic and phone","คลินิกและเบอร์โทร"),next:a("Next visit","นัดครั้งต่อไป"),
+ foot:a("General information for patients. It does not replace the advice of your doctor. Prepared with the OSA Guide by Warodom Phaenthong, M.D.","ข้อมูลทั่วไปสำหรับผู้ป่วย ไม่ทดแทนคำแนะนำของแพทย์ จัดทำด้วย OSA Guide โดย Warodom Phaenthong, M.D.")
+};
+function handResults(hl){
+ const th=hl==='th',p=psgNums(),e=essRes(),sv=[a("normal","ปกติ"),a("mild","เล็กน้อย"),a("moderate","ปานกลาง"),a("severe","รุนแรง")];
+ const L=[];
+ L.push([th?'ผลการตรวจการนอนหลับ':'Your sleep test',p.ahi!==null?(p.home?'REI ':'AHI ')+p.ahi.toFixed(1)+(th?' ครั้งต่อชั่วโมง — OSA ระดับ':' events an hour — ')+(th?sv[p.sev].th:sv[p.sev].en+' sleep apnoea')+(p.sev===0?(th?' (ไม่เข้าเกณฑ์)':' (below the diagnostic level)'):''):'—']);
+ L.push([th?'คะแนนความง่วง (Epworth)':'Your sleepiness score (Epworth)',e?e.s+(th?' จาก 24 (เกิน 10 หมายถึงง่วงมากกว่าปกติ)':' out of 24 (above 10 means sleepier than usual)'):'—']);
+ return L;
+}
+function handoutHtml(hl){
+ const T=o=>o[hl]||o.en,th=hl==='th';
+ const res=handResults(hl).map(([k,v])=>'<div class="hr"><b>'+k+':</b> '+v+'</div>').join('');
+ const blocks=HAND.blocks.map(([ti,kind,body])=>'<h3>'+T(ti)+'</h3>'+(kind==='p'?'<p>'+T(body)+'</p>':'<ul>'+body.map(x=>'<li>'+T(x)+'</li>').join('')+'</ul>')).join('');
+ const plan='<h3>'+T(HAND.plan)+'</h3><div class="pl">'+HAND.planItems.map(x=>'<span class="cb">☐ '+T(x)+(x===HAND.planItems[HAND.planItems.length-1]?' ____________':'')+'</span>').join('')+'</div><div class="ln2">'+T(HAND.clinic)+': ______________________________</div><div class="ln2">'+T(HAND.next)+': ______________________________</div>';
+ return '<div class="sheet" lang="'+hl+'"><h2>'+T(HAND.title)+'</h2><div class="hsub">'+T(HAND.sub)+'</div><div class="hbox">'+res+'</div>'+blocks+plan+'<div class="hfoot">'+T(HAND.foot)+'</div></div>';
+}
+function handoutText(hl){
+ const T=o=>o[hl]||o.en;const L=[T(HAND.title),''];
+ handResults(hl).forEach(([k,v])=>L.push(k+': '+v));L.push('');
+ HAND.blocks.forEach(([ti,kind,body])=>{L.push(T(ti));if(kind==='p')L.push(T(body));else body.forEach(x=>L.push('- '+T(x)));L.push('')});
+ L.push(T(HAND.plan));HAND.planItems.forEach(x=>L.push('[ ] '+T(x)));L.push('');L.push(T(HAND.clinic)+': ');L.push(T(HAND.next)+': ');L.push('');L.push(T(HAND.foot));
+ return L.join('\n');
+}
+function handModal(){
+ const lb=(v,l)=>'<button data-act="hlang" data-v="'+v+'" aria-pressed="'+(handLang===v)+'" class="'+(handLang===v?'on':'')+'">'+l+'</button>';
+ return '<div class="modal handwrap" data-act="hclose" data-hand-modal><div class="handbox" role="dialog" aria-modal="true" aria-label="'+t(a('Patient handout','เอกสารสำหรับผู้ป่วย'))+'"><div class="noprint ctl" style="margin-top:0"><div class="seg" role="group" aria-label="Language">'+lb('en','English')+lb('th','ไทย')+'</div><span style="flex:1"></span><button class="btn" data-act="hcopy">'+t(a('Copy text','คัดลอกข้อความ'))+'</button><button class="btn" data-act="hprint" style="background:var(--ac);color:#fff;border-color:var(--ac)">'+t(a('Print','พิมพ์'))+'</button><button class="btn" data-act="hclose">'+t(a('Close','ปิด'))+'</button></div><p class="note noprint" style="margin:0 0 8px">'+t(a('Printing works from a normal browser, not inside the Claude viewer; use Copy text there. The results box fills from what you entered.','พิมพ์ได้จากเบราว์เซอร์ทั่วไป ไม่ใช่ในตัวดู Claude ที่นั่นให้ใช้คัดลอกข้อความ กล่องผลการตรวจเติมจากข้อมูลที่กรอก'))+'</p>'+handoutHtml(handLang)+'</div></div>';
+}
+function copyHand(btn){
+ const text=handoutText(handLang);const done=()=>{const o=btn.textContent;btn.textContent=t(a('Copied','คัดลอกแล้ว'));setTimeout(()=>{btn.textContent=o},1500)};
+ const fb=()=>{const s=document.querySelector('.sheet');if(!s)return;const r=document.createRange();r.selectNodeContents(s);const g=getSelection();g.removeAllRanges();g.addRange(r);btn.textContent=t(a('Selected: press Ctrl+C','เลือกแล้ว: กด Ctrl+C'))};
+ try{navigator.clipboard.writeText(text).then(done,fb)}catch(e){fb()}
 }
 function summaryModal(){
  const txt=buildSummary().replace(/&/g,'&amp;').replace(/</g,'&lt;');
@@ -595,11 +672,15 @@ function vScore(){
  +`<p class="note">${t(a('Neck cut-off 40 cm follows the original STOP-Bang; Asian cut-offs for BMI may be lower — judge clinically.','เกณฑ์รอบคอ 40 ซม. ตาม STOP-Bang ต้นฉบับ เกณฑ์ BMI ของเอเชียอาจต่ำกว่า — ใช้ดุลยพินิจ'))}</p>`;
 }
 function vPsg(){
- const inp=PF.map(([k,l])=>`<div><label>${t(l)}<input type="number" step="any" inputmode="decimal" data-ps="${k}" value="${esc(psg[k]??'')}"></label></div>`).join('');
+ const home=isHome();
+ const fld=([k,l])=>`<div><label>${t(k==='tst'?(home?HTLAB:PTLAB):l)}<input type="number" step="any" inputmode="decimal" data-ps="${k}" value="${esc(psg[k]??'')}"></label></div>`;
+ const rule=`<div><label>${t(a('Hypopnoea rule','เกณฑ์ hypopnoea'))}<select data-pss="rule"><option value="">—</option><option value="A"${psg.rule==='A'?' selected':''}>A (AASM)</option><option value="B"${psg.rule==='B'?' selected':''}>B (CMS)</option></select></label></div>`;
+ const sw=`<div class="ctl"><div class="seg" role="group" aria-label="${t(a('Type of sleep test','ชนิดการตรวจการนอน'))}"><button data-act="ptype" data-v="psg" aria-pressed="${!home}" class="${home?'':'on'}">${t(a('Lab / portable PSG','PSG ในห้องปฏิบัติการ/พกพา'))}</button><button data-act="ptype" data-v="home" aria-pressed="${home}" class="${home?'on':''}">${t(a('Home test (types 3–4)','Home test (ประเภท 3–4)'))}</button></div></div><p class="note" style="margin:4px 0">${home?t(a('Home test: no sleep stages, so the result is REI per hour of monitoring time.','Home test: ไม่มีระยะการหลับ จึงรายงานเป็น REI ต่อชั่วโมงที่บันทึก')):t(a('PSG: result is AHI per hour of sleep; RDI, REM split and efficiency are available.','PSG: รายงาน AHI ต่อชั่วโมงการหลับ และดู RDI แยก REM และประสิทธิภาพการนอนได้'))}</p>`;
+ const inp=sw+'<div class="grid">'+PF.map(fld).join('')+PF2.filter(x=>!home||!x[2]).map(fld).join('')+rule+'</div>';
  const sev=`<div class="tw"><table><tr><th>AHI /h</th><th>${t(a('Severity','ความรุนแรง'))}</th></tr><tr><td>&lt; 5</td><td>${t(a('Normal','ปกติ'))}</td></tr><tr><td>5 – &lt; 15</td><td>${t(a('Mild','เล็กน้อย'))}</td></tr><tr><td>15 – &lt; 30</td><td>${t(a('Moderate','ปานกลาง'))}</td></tr><tr><td>≥ 30</td><td>${t(a('Severe','รุนแรง'))}</td></tr></table></div>`+lis(PSGDEF);
  const sel=lis(PSGTEST.concat(AASM_DX));
  const read=`<ul><li>${t(a('Sleep efficiency, REM and N3 share, arousal index.','ประสิทธิภาพการนอน สัดส่วน REM และ N3 arousal index'))}</li><li>${t(a('AHI overall, REM vs NREM, supine vs non-supine.','AHI รวม REM เทียบ NREM ท่านอนหงายเทียบท่าอื่น'))}</li><li>${t(a('Obstructive vs central vs mixed events.','obstructive / central / mixed'))}</li><li>${t(a('SpO₂ nadir, T90, oxygen desaturation index.','SpO₂ ต่ำสุด T90 ODI'))}</li><li>${t(a('Heart-rhythm findings, limb movements, snoring.','จังหวะหัวใจ การเคลื่อนไหวขา การกรน'))}</li></ul>`;
- return det('psgin','sky',t(a('Enter the study results','ใส่ผลการตรวจ')),`<div class="grid">${inp}</div><div id="psgout">${psgOut()}</div>`,'')
+ return det('psgin','sky',t(a('Enter the study results','ใส่ผลการตรวจ')),`${inp}<div id="psgout">${psgOut()}</div>`,'')
  +det('psgsev','violet',t(a('AHI severity','ระดับความรุนแรงตาม AHI')),sev)
  +det('psgsel','emerald',t(a('Which test?','เลือกตรวจแบบใด')),sel)
  +det('psgread','slate',t(a('What to read in a report','อ่านอะไรในรายงาน')),read);
@@ -775,6 +856,7 @@ function render(){
  <nav>${UI.tabs.map(([k,l,c,p,s])=>`<button data-tab="${k}" class="tile ${c}${tab===k?' on':''}" title="${t(l)}" aria-label="${t(l)}">${ic(p)}<span>${narrow()?t(s):t(l)}</span></button>`).join('')}</nav>
  ${strip()}
  ${VIEW[tab]()}
+ ${handOpen?handModal():''}
  ${summaryOpen?summaryModal():''}
  ${donateOpen?donateModal():''}
  ${modal?`<div class="modal" data-act="close"><div>${CHANGELOG.map(([v,d,ls])=>`<h3 style="margin:0">v${v} · ${d}</h3><ul>${ls.map(x=>`<li>${t(x)}</li>`).join('')}</ul>`).join('')}<button class="btn" data-act="close">OK</button></div></div>`:''}`;
@@ -789,7 +871,12 @@ document.addEventListener('click',e=>{
  if(el.dataset.flt){txFlt=el.dataset.flt;render();return}
  if(el.dataset.tab){tab=el.dataset.tab;if(tab==='tx'){GRP.flatMap(g=>g[1]).forEach(k=>openSet.delete(k));openSet.add('map')}render();window.scrollTo(0,0);return}
  const ac=el.dataset.act;
- if((ac==='close'||ac==='dclose'||ac==='sclose')&&e.target!==el&&el.classList.contains('modal'))return;
+ if((ac==='close'||ac==='dclose'||ac==='sclose'||ac==='hclose')&&e.target!==el&&el.classList.contains('modal'))return;
+ if(ac==='hand'){handOpen=true;handLang=lang;render();return}
+ if(ac==='hclose'){handOpen=false;render();return}
+ if(ac==='hlang'){handLang=el.dataset.v;render();return}
+ if(ac==='hprint'){try{window.print()}catch(x){}return}
+ if(ac==='hcopy'){copyHand(el);return}
  if(ac==='summary'){summaryOpen=true;render();return}
  if(ac==='sclose'){summaryOpen=false;render();return}
  if(ac==='scopy'){copySummary(el);return}
@@ -802,6 +889,7 @@ document.addEventListener('click',e=>{
  else if(ac==='close')modal=null;
  else if(ac==='tostop'){sendToScores();tab='score';openSet.add('stop');openSet.add('ber');render();window.scrollTo(0,0);return}
  else if(ac==='dismissfill'){fromCheck=null}
+ else if(ac==='ptype'){psg.ttype=el.dataset.v==='home'?'home':'psg'}
  else if(ac==='newpt'){confirmNew=true}
  else if(ac==='newno'){confirmNew=false}
  else if(ac==='newyes'){resetAll()}
@@ -815,6 +903,7 @@ document.addEventListener('change',e=>{
  const d=e.target.dataset;
  if(d.ck!==undefined){if(e.target.checked)checks[d.ck]=1;else delete checks[d.ck];save();render()}
  else if(d.ber!==undefined){ber[d.ber]=e.target.value===''?null:+e.target.value;render()}
+ else if(d.pss!==undefined){psg[d.pss]=e.target.value;document.getElementById('psgout').innerHTML=psgOut();saveAll()}
  else if(d.bds!==undefined){body[d.bds]=e.target.value;document.getElementById('bodyout').innerHTML=bodyOut();saveAll()}
  else if(d.pps!==undefined){pap[d.pps]=e.target.value;document.getElementById('papout').innerHTML=papOut()}
  else if(d.sbmod!==undefined){sbMod=e.target.checked;render()}
@@ -827,7 +916,7 @@ document.addEventListener('input',e=>{
  const k=e.target.dataset.ps;if(!k)return;
  psg[k]=e.target.value;document.getElementById('psgout').innerHTML=psgOut();saveAll();
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(donateOpen){donateOpen=false;render()}else if(summaryOpen){summaryOpen=false;render()}else if(modal){modal=null;render()}}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(handOpen){handOpen=false;render()}else if(donateOpen){donateOpen=false;render()}else if(summaryOpen){summaryOpen=false;render()}else if(modal){modal=null;render()}}});
 addEventListener('resize',()=>{const n=narrow();if(n!==lastN){lastN=n;render()}});
 let lastN=narrow();
 try{const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap';document.head.appendChild(l)}catch(e){}

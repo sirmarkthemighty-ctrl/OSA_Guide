@@ -14,7 +14,7 @@ const document = { getElementById: id => els[id] || (els[id] = el()), createElem
 const ctx = vm.createContext({ document, window: { scrollTo() {}, scrollY: 0, print() {} }, navigator: { language: 'en' }, localStorage: { getItem(k) { return store[k] ?? null; }, setItem(k, v) { store[k] = String(v); } }, scrollTo() {}, addEventListener() {}, innerWidth: 1000, scrollY: 0, matchMedia: () => ({ matches: false }), getSelection: () => ({}), console });
 vm.runInContext(code + `
 ;globalThis.__T={GROUPS,TX,SCR,PSGTEST,PSGDEF,COMPL,AASM_DX,AASM_PAP,AASM_OA,AASM_SURG,AASM_FU,THAIABOUT,STOPQ,ESSQ,ESSOPT,BERQ,PF,UI,CHANGELOG,DONATE,
- NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
+ HAND,handoutHtml,handoutText,handModal,PF2,NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
  set:(o)=>{if('body'in o)body=o.body;if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
  get:()=>({stop,ber,fromCheck,checks,body,psg,pap,sbMod}),render};`, ctx);
 const T = ctx.__T;
@@ -143,6 +143,36 @@ T.set({ checks: { sx0: 1 }, stop: { 0: true }, psg: { tst: 6 }, pap: { use: 4 },
 T.set({ checks: {}, stop: {}, psg: {}, pap: {}, body: {} }); T.loadAll(); gg = T.get();
 ok(gg.checks.sx0 === 1 && gg.stop[0] === true && gg.psg.tst === 6 && gg.pap.use === 4 && gg.body.age === 50, 'entries survive save and load');
 T.resetAll(); T.loadAll(); gg = T.get(); ok(!Object.keys(gg.checks).length && !Object.keys(gg.psg).length && !Object.keys(gg.body).length, 'New patient clears everything, also in storage');
+
+// ---- richer sleep-test inputs
+T.set({ lang: 'en', psg: { tst: 6, oa: 60, ca: 10, hy: 50, rera: 30, tib: 7.5, rem: 45, nrem: 15, odi: 22, arx: 20, rule: 'A' } });
+let pn = T.psgNums(); let po = T.psgOut();
+ok(Math.abs(pn.rdi - 25) < 1e-9 && Math.abs(pn.se - 80) < 1e-9 && pn.remPred === true, 'RDI 25, efficiency 80 %, REM-predominant');
+ok(/RDI 25\.0/.test(po) && /Sleep efficiency<\/span>|Sleep efficiency 80/.test(po) && /REM-predominant/.test(po) && /ODI 22/.test(po) && /Arousal index/.test(po) && /Hypopnoea rule used: A/.test(po), 'PSG output shows the extra fields');
+T.set({ psg: { tst: 6, oa: 60, ca: 10, hy: 50, rem: 10, nrem: 8 } }); ok(T.psgNums().remPred === false, 'REM 10 vs NREM 8 is not predominant');
+T.set({ psg: { tst: 6, oa: 60, ca: 10, hy: 50, rem: 4, nrem: 0 } }); ok(T.psgNums().remPred === false, 'REM AHI under 5 never counts as predominant');
+T.set({ psg: { ttype: 'home', tst: 8, oa: 40, ca: 0, hy: 40, rera: 30, tib: 9, rem: 60, nrem: 5, arx: 30 } });
+pn = T.psgNums(); po = T.psgOut();
+ok(pn.home && pn.ahi === 10 && pn.rdi === null && pn.se === null && pn.remPred === false && pn.arx === null, 'home test ignores RERA, time in bed, REM split and arousals');
+ok(/REI 10\.0/.test(po) && /Home test:/.test(po) && !/RDI/.test(po) && !/REM-predominant/.test(po), 'home test is labelled REI with the under-read warning');
+T.set({ psg: { ttype: 'home' } }); ok(/Monitoring time/.test(T.psgOut()) && /REI N\/A/.test(T.psgOut()), 'home test: monitoring-time label and REI N/A');
+T.set({ psg: { ttype: 'home', tst: 8, oa: 40, ca: 0, hy: 40 }, ess: Array(8).fill(null), stop: {}, checks: {} }); ok(/Home sleep test: REI 10\.0/.test(T.buildSummary()) && /REI 10\.0/.test(T.strip()), 'summary and strip say REI for a home test');
+T.set({ psg: { tst: 6, oa: 60, ca: 10, hy: 50, odi: 80 } }); ok(/well above/.test(T.psgOut()), 'ODI far above the AHI is flagged');
+T.set({ psg: {} });
+
+// ---- patient handout
+['title', 'sub', 'plan', 'clinic', 'next', 'foot'].forEach(k => bi(T.HAND[k], 'HAND.' + k));
+T.HAND.blocks.forEach(([ti, kind, body], i) => { bi(ti, 'HAND block ' + i); (kind === 'p' ? [body] : body).forEach((x, j) => bi(x, 'HAND ' + i + '.' + j)); });
+T.HAND.planItems.forEach((x, i) => bi(x, 'HAND plan ' + i));
+T.set({ lang: 'en', psg: { tst: 6, oa: 60, ca: 10, hy: 50 }, ess: [2, 2, 2, 2, 2, 2, 0, 0], checks: {}, stop: {}, ber: Array(9).fill(null) });
+let he = T.handoutHtml('en'), ht = T.handoutHtml('th');
+ok(/AHI 20\.0/.test(he) && /moderate sleep apnoea/.test(he) && /12 out of 24/.test(he), 'handout (EN) fills the result box');
+ok(/ปานกลาง/.test(ht) && /12 จาก 24/.test(ht) && TH.test(ht) && !/Warodom Phaenthong, M\.D\.[^<]*<\/div><\/div>$/.test('') , 'handout (TH) fills the result box in Thai');
+T.set({ psg: {}, ess: Array(8).fill(null) }); he = T.handoutHtml('en'); ok((he.match(/—/g) || []).length >= 2 && !/N\/A|undefined|NaN/.test(he), 'handout shows dashes, not made-up numbers, when nothing is entered');
+ok(/at least 4 hours a night/.test(he) && /Do not drive/.test(he) && /1–2 months/.test(he) && /class="sheet"/.test(he), 'handout carries the PAP target, driving and follow-up advice');
+ok(/☐/.test(he) && !/name/i.test(he.replace(/Warodom Phaenthong/, '')), 'handout has tick boxes and no name field');
+const htx = T.handoutText('th'); ok(TH.test(htx) && /\[ \]/.test(htx) && !/undefined/.test(htx), 'handout text copy works in Thai');
+T.set({ lang: 'en' }); ok(/data-hand-modal/.test(T.handModal()) && /data-act="hprint"/.test(T.handModal()), 'handout pop-up has print and copy');
 
 // ---- every tab renders in both languages without errors or stray tokens
 for (const lg of ['en', 'th']) for (const tb of ['check', 'score', 'psg', 'tx', 'src']) {
