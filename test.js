@@ -14,7 +14,7 @@ const document = { getElementById: id => els[id] || (els[id] = el()), createElem
 const ctx = vm.createContext({ document, window: { scrollTo() {}, scrollY: 0, print() {} }, navigator: { language: 'en' }, localStorage: { getItem(k) { return store[k] ?? null; }, setItem(k, v) { store[k] = String(v); } }, scrollTo() {}, addEventListener() {}, innerWidth: 1000, scrollY: 0, matchMedia: () => ({ matches: false }), getSelection: () => ({}), console });
 vm.runInContext(code + `
 ;globalThis.__T={GROUPS,TX,SCR,PSGTEST,PSGDEF,COMPL,AASM_DX,AASM_PAP,AASM_OA,AASM_SURG,AASM_FU,THAIABOUT,STOPQ,ESSQ,ESSOPT,BERQ,PF,UI,CHANGELOG,DONATE,
- HAND,handoutHtml,handoutText,handModal,PF2,NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
+ HAND,handoutHtml,handoutText,handModal,PF2,VERSION,NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
  set:(o)=>{if('body'in o)body=o.body;if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('kku'in o)sbKku=o.kku;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
  get:()=>({stop,ber,fromCheck,checks,body,psg,pap,sbMod,sbKku}),render};`, ctx);
 const T = ctx.__T;
@@ -188,6 +188,15 @@ ok(/at least 4 hours a night/.test(he) && /Do not drive/.test(he) && /1–2 mont
 ok(/☐/.test(he) && !/name/i.test(he.replace(/Warodom Phaenthong/, '')), 'handout has tick boxes and no name field');
 const htx = T.handoutText('th'); ok(TH.test(htx) && /\[ \]/.test(htx) && !/undefined/.test(htx), 'handout text copy works in Thai');
 T.set({ lang: 'en' }); ok(/data-hand-modal/.test(T.handModal()) && /data-act="hprint"/.test(T.handModal()), 'handout pop-up has print and copy');
+
+// ---- changelog: one entry per update, newest first, own version + date + time, page shows the latest version
+const cl = T.CHANGELOG, vs = cl.map(e => e[0]);
+const num3 = v => v.split('.').map(Number);
+ok(vs.length === new Set(vs).size, 'changelog versions are unique');
+ok(cl.every((e, i) => i === 0 || (() => { const a = num3(cl[i - 1][0]), b = num3(e[0]); return a[0] > b[0] || (a[0] === b[0] && a[1] > b[1]) || (a[0] === b[0] && a[1] === b[1] && a[2] > b[2]); })()), 'changelog is newest first with rising versions');
+ok(cl.every(e => /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(e[1])), 'every changelog entry has a date and a time');
+ok(cl.every(e => e[2].length >= 1), 'no empty changelog entry');
+ok(T.VERSION === cl[0][0], 'the version pill shows the newest changelog entry (' + T.VERSION + ' vs ' + cl[0][0] + ')');
 
 // ---- every tab renders in both languages without errors or stray tokens
 for (const lg of ['en', 'th']) for (const tb of ['check', 'score', 'psg', 'tx', 'src']) {
