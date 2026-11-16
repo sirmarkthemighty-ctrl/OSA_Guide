@@ -15,8 +15,8 @@ const ctx = vm.createContext({ document, window: { scrollTo() {}, scrollY: 0, pr
 vm.runInContext(code + `
 ;globalThis.__T={GROUPS,TX,SCR,PSGTEST,PSGDEF,COMPL,AASM_DX,AASM_PAP,AASM_OA,AASM_SURG,AASM_FU,THAIABOUT,STOPQ,ESSQ,ESSOPT,BERQ,PF,UI,CHANGELOG,DONATE,
  HAND,handoutHtml,handoutText,handModal,PF2,NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
- set:(o)=>{if('body'in o)body=o.body;if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
- get:()=>({stop,ber,fromCheck,checks,body,psg,pap,sbMod}),render};`, ctx);
+ set:(o)=>{if('body'in o)body=o.body;if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('kku'in o)sbKku=o.kku;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
+ get:()=>({stop,ber,fromCheck,checks,body,psg,pap,sbMod,sbKku}),render};`, ctx);
 const T = ctx.__T;
 
 let pass = 0; const fails = [];
@@ -61,6 +61,21 @@ ok(stopN(5).k === 'high', 'STOP-Bang 5 high');
 ok(stopN(2, { 7: true }).k === 'high', 'STOP-Bang 3: two of S,T,O,P plus male -> high');
 ok(stopN(1, { 4: true, 7: true }).k === 'int', 'STOP-Bang 3: only one of S,T,O,P -> intermediate');
 T.set({ sb: true }); ok(stopN(2).k === 'low' && stopN(3).k === 'high', 'modified STOP-Bang: <3 low, >=3 high'); T.set({ sb: false });
+
+// ---- Khon Kaen modified STOP-Bang (PeerJ 2025): age >= 40, BMI >= 23, neck >= 35; score >= 3 is high
+T.set({ sb: false, kku: true });
+ok(stopN(2).k === 'low' && stopN(3).k === 'high', 'Khon Kaen version: < 3 low, >= 3 high');
+T.set({ lang: 'en', body: { w: 60, h: 160, age: 40, neck: 35, sex: 'f' }, stop: {} }); T.fillStopFromBody(); let kg = T.get();
+ok(Math.abs(T.bmiOf() - 23.4375) < 0.001 && kg.stop[4] === true && kg.stop[5] === true && kg.stop[6] === true && kg.stop[7] === false, 'Khon Kaen cut-offs are inclusive: BMI 23.4, age 40 and neck 35 all count');
+T.set({ body: { w: 55, h: 160, age: 39, neck: 34 }, stop: {} }); T.fillStopFromBody(); kg = T.get();
+ok(kg.stop[4] === false && kg.stop[5] === false && kg.stop[6] === false, 'just below the Khon Kaen cut-offs: BMI 21.5, age 39, neck 34 do not count');
+ok(/≥ 23/.test(T.bodyOut()) && /Khon Kaen/.test(T.bodyOut().replace(/BMI \d+\.\d+/, '')) , 'body helper names the Khon Kaen cut-offs');
+T.set({ kku: false, sb: false, body: { w: 80, h: 160, age: 50, neck: 40 }, stop: {} }); T.fillStopFromBody(); kg = T.get();
+ok(kg.stop[5] === false && kg.stop[6] === false && kg.stop[4] === false, 'original cut-offs stay strict (age 50, neck 40, BMI 31 do not count)');
+T.set({ kku: true, stop: { 0: true, 1: true, 2: true }, ess: Array(8).fill(null), checks: {}, psg: {} }); ok(/modified, Khon Kaen/.test(T.buildSummary()), 'summary names the Khon Kaen version');
+T.set({ kku: false, sb: false });
+// the two modified versions cannot both be on (handled by the page; the saved state keeps one)
+T.set({ checks: {}, stop: {}, psg: {}, pap: {}, body: {}, kku: true }); T.saveAll(); T.set({ kku: false }); T.loadAll(); ok(T.get().sbKku === true, 'Khon Kaen switch is saved and restored'); T.resetAll(); T.loadAll(); ok(T.get().sbKku === false, 'New patient clears the switch');
 
 // ---- Epworth
 const essN = (n) => { const a = Array(8).fill(0); let r = n; for (let i = 0; i < 8 && r > 0; i++) { a[i] = Math.min(3, r); r -= a[i]; } T.set({ ess: a }); return T.essRes(); };
