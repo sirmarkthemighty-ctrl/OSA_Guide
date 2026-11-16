@@ -661,7 +661,7 @@ function berBlock(){
 function vScore(){
  const r=stopRisk();
  const BMI30=a('BMI > 30 kg/m² (modified)?','BMI > 30 กก./ม.² (แบบปรับปรุง)?');
- const tog=`<label class="ck" style="align-items:center"><span style="flex:1;min-width:0"><b>${t(a('Modified STOP-Bang (Thai)','STOP-Bang แบบปรับปรุง (ไทย)'))}</b><small>${t(a('BMI cut-off > 30 instead of > 35; high risk = score ≥ 3. Ramathibodi study, 400 elective surgical patients, BMC Anesthesiol 2021.','BMI > 30 แทน > 35; ความเสี่ยงสูง = คะแนน ≥ 3 การศึกษารามาธิบดี ผู้ป่วยผ่าตัดตามแผน 400 ราย BMC Anesthesiol 2021'))}</small></span><input type="checkbox" class="sw" role="switch" aria-checked="${sbMod}" data-sbmod="1"${sbMod?' checked':''}></label>`;
+ const tog=`<label class="ck" style="align-items:flex-start"><input type="checkbox" class="sw" role="switch" aria-checked="${sbMod}" data-sbmod="1"${sbMod?' checked':''}><span style="flex:1;min-width:0"><b>${t(a('Modified STOP-Bang (Thai)','STOP-Bang แบบปรับปรุง (ไทย)'))}</b><small>${t(a('BMI cut-off > 30 instead of > 35; high risk = score ≥ 3. Ramathibodi study, 400 elective surgical patients, BMC Anesthesiol 2021.','BMI > 30 แทน > 35; ความเสี่ยงสูง = คะแนน ≥ 3 การศึกษารามาธิบดี ผู้ป่วยผ่าตัดตามแผน 400 ราย BMC Anesthesiol 2021'))}</small></span></label>`;
  const sb=tog+STOPQ.map(([q],i)=>`<label class="ck"><input type="checkbox" data-st="${i}"${stop[i]?' checked':''}><span>${t(sbMod&&i===4?BMI30:q)}</span></label>`).join('');
  const e=essRes();
  const eb=ESSQ.map((q,i)=>`<label style="display:block;margin:8px 0;font-weight:600">${i+1}. ${t(q)}<select data-ess="${i}"><option value="">—</option>${ESSOPT.map((o,v)=>`<option value="${v}"${ess[i]===v?' selected':''}>${t(o)}</option>`).join('')}</select></label>`).join('');
