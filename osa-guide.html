@@ -61,7 +61,7 @@ ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
 <script>
 const VERSION='1.0.0', DATE='2026-11-16';
 const a=(en,th)=>({en,th});
-let lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin']),modal=null;
+let sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin']),modal=null;
 try{lang=localStorage.getItem('osa-lang')||'en';checks=JSON.parse(localStorage.getItem('osa-checks')||'{}')}catch(e){}
 const t=o=>o[lang]||o.en;
 const save=()=>{try{localStorage.setItem('osa-checks',JSON.stringify(checks));localStorage.setItem('osa-lang',lang)}catch(e){}};
@@ -141,7 +141,8 @@ function stopRisk(){
  const s4=[0,1,2,3].filter(i=>stop[i]).length;
  const mod=stop[7]||stop[4]||stop[6];
  let k,c;
- if(n>=5||(n>=3&&s4>=2&&mod)){k='high';c='rose'}else if(n>=3){k='int';c='amber'}else{k='low';c='emerald'}
+ if(sbMod){if(n>=3){k='high';c='rose'}else{k='low';c='emerald'}}
+ else if(n>=5||(n>=3&&s4>=2&&mod)){k='high';c='rose'}else if(n>=3){k='int';c='amber'}else{k='low';c='emerald'}
  return{n,k,c};
 }
 const RISKTXT={low:a('Low risk of moderate–severe OSA','ความเสี่ยงต่ำต่อ OSA ระดับปานกลาง–รุนแรง'),int:a('Intermediate risk','ความเสี่ยงปานกลาง'),high:a('High risk of moderate–severe OSA','ความเสี่ยงสูงต่อ OSA ระดับปานกลาง–รุนแรง')};
@@ -233,7 +234,7 @@ const TX=[
  a('Repeat sleep study after significant weight change (± 10 %), after surgery / oral appliance, or if symptoms return.','ตรวจการนอนซ้ำเมื่อน้ำหนักเปลี่ยนมาก (± 10 %) หลังผ่าตัด/ใช้เครื่องมือในช่องปาก หรืออาการกลับมา')]],
 ];
 
-const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา')]]];
+const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)')]]];
 
 /* ---------- render ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -259,10 +260,12 @@ function vCheck(){
 }
 function vScore(){
  const r=stopRisk();
- const sb=STOPQ.map(([q],i)=>`<label class="ck"><input type="checkbox" data-st="${i}"${stop[i]?' checked':''}><span>${t(q)}</span></label>`).join('');
+ const BMI30=a('BMI > 30 kg/m² (modified)?','BMI > 30 กก./ม.² (แบบปรับปรุง)?');
+ const tog=`<label class="ck"><input type="checkbox" data-sbmod="1"${sbMod?' checked':''}><span><b>${t(a('Modified STOP-Bang (Thai)','STOP-Bang แบบปรับปรุง (ไทย)'))}</b><small>${t(a('BMI cut-off > 30 instead of > 35; high risk = score ≥ 3. Ramathibodi study, 400 elective surgical patients, BMC Anesthesiol 2021.','BMI > 30 แทน > 35; ความเสี่ยงสูง = คะแนน ≥ 3 การศึกษารามาธิบดี ผู้ป่วยผ่าตัดตามแผน 400 ราย BMC Anesthesiol 2021'))}</small></span></label>`;
+ const sb=tog+STOPQ.map(([q],i)=>`<label class="ck"><input type="checkbox" data-st="${i}"${stop[i]?' checked':''}><span>${t(sbMod&&i===4?BMI30:q)}</span></label>`).join('');
  const e=essRes();
  const eb=ESSQ.map((q,i)=>`<label style="display:block;margin:8px 0;font-weight:600">${i+1}. ${t(q)}<select data-ess="${i}"><option value="">—</option>${ESSOPT.map((o,v)=>`<option value="${v}"${ess[i]===v?' selected':''}>${t(o)}</option>`).join('')}</select></label>`).join('');
- return det('stop','indigo','STOP-Bang',sb+`<div class="res ${r.c}"><b>${r.n}/8</b> — ${t(RISKTXT[r.k])}<small>${t(RISKACT[r.k])}</small></div><p class="note">${t(a('0–2 low · 3–4 intermediate · 5–8 high. Also high risk if ≥ 2 of the first four items plus male, BMI > 35 or neck > 40 cm.','0–2 ต่ำ · 3–4 ปานกลาง · 5–8 สูง และถือว่าสูงถ้า ≥ 2 ใน 4 ข้อแรก ร่วมกับเพศชาย BMI > 35 หรือรอบคอ > 40 ซม.'))}</p>`)
+ return det('stop','indigo','STOP-Bang',sb+`<div class="res ${r.c}"><b>${r.n}/8</b> — ${t(RISKTXT[r.k])}<small>${t(RISKACT[r.k])}</small></div><p class="note">${sbMod?t(a('Modified: 0–2 low · ≥ 3 high. In that study a score ≥ 3 did not significantly predict overall perioperative adverse events, but it did flag difficult ventilation, laryngoscopic view ≥ 3, oxygen need after surgery and ICU admission.','แบบปรับปรุง: 0–2 ต่ำ · ≥ 3 สูง ในการศึกษานี้ คะแนน ≥ 3 ไม่สัมพันธ์กับภาวะแทรกซ้อนรวมอย่างมีนัยสำคัญ แต่บ่งชี้ภาวะใส่ท่อ/ช่วยหายใจยาก laryngoscopic view ≥ 3 ต้องการออกซิเจนหลังผ่าตัด และการเข้า ICU')):t(a('0–2 low · 3–4 intermediate · 5–8 high. Also high risk if ≥ 2 of the first four items plus male, BMI > 35 or neck > 40 cm.','0–2 ต่ำ · 3–4 ปานกลาง · 5–8 สูง และถือว่าสูงถ้า ≥ 2 ใน 4 ข้อแรก ร่วมกับเพศชาย BMI > 35 หรือรอบคอ > 40 ซม.'))}</p>`)
  +det('ess','amber','Epworth Sleepiness Scale',`<p class="note">${t(a('How likely are you to doze off (not just feel tired) in these situations, recently?','ในช่วงนี้ มีโอกาสเผลอหลับ (ไม่ใช่แค่รู้สึกเหนื่อย) ในสถานการณ์ต่อไปนี้มากเพียงใด'))}</p>${eb}`+(e?`<div class="res ${e.c}"><b>${e.s}/24</b> — ${t(ESSTXT[e.k])}<small>${t(a('Above 10 suggests excessive daytime sleepiness; sleepiness may be absent in many OSA patients, so a low score does not exclude OSA.','เกิน 10 บ่งชี้ง่วงกลางวันผิดปกติ ผู้ป่วย OSA จำนวนมากไม่ง่วง คะแนนต่ำจึงไม่ตัด OSA'))}</small></div>`:`<div class="res slate">N/A <small>${t(a('Answer all 8 items.','ตอบให้ครบ 8 ข้อ'))}</small></div>`),e?e.s+'/24':'N/A')
  +`<p class="note">${t(a('Neck cut-off 40 cm follows the original STOP-Bang; Asian cut-offs for BMI may be lower — judge clinically.','เกณฑ์รอบคอ 40 ซม. ตาม STOP-Bang ต้นฉบับ เกณฑ์ BMI ของเอเชียอาจต่ำกว่า — ใช้ดุลยพินิจ'))}</p>`;
 }
@@ -280,7 +283,7 @@ function vTx(){
  return TX.map(([c,ti,items],i)=>det('tx'+i,c,t(ti),'<ul>'+items.map(x=>`<li>${t(x)}</li>`).join('')+'</ul>','')).join('');
 }
 function vSrc(){
- return `<div class="card"><p><b>${t(a('Based on commonly cited criteria:','อ้างอิงเกณฑ์ที่ใช้กันทั่วไป:'))}</b></p><ul><li>AASM Clinical Practice Guideline — diagnostic testing for adult OSA (2017)</li><li>AASM Manual for the Scoring of Sleep and Associated Events (AHI definitions)</li><li>AASM Clinical Practice Guideline — PAP treatment of OSA (2019)</li><li>AASM / AADSM guideline — oral appliance therapy (2015)</li><li>STOP-Bang: Chung F et al., Anesthesiology 2008; Epworth Sleepiness Scale: Johns MW, Sleep 1991</li><li>US FDA — tirzepatide label for OSA (Dec 2024)</li></ul><p class="note">${t(a('Not re-verified line by line against the original documents in this app, and no Thai national OSA guideline is included. Check the current guideline and local availability before acting. N/A is shown wherever data are missing.','แอปนี้ยังไม่ได้ตรวจเทียบทีละบรรทัดกับเอกสารต้นฉบับ และไม่ได้รวมแนวทางเวชปฏิบัติ OSA ของไทย โปรดตรวจแนวทางล่าสุดและความพร้อมใช้ในประเทศก่อนใช้ ข้อมูลที่ไม่มีแสดงเป็น N/A'))}</p></div>`;
+ return `<div class="card"><p><b>${t(a('Based on commonly cited criteria:','อ้างอิงเกณฑ์ที่ใช้กันทั่วไป:'))}</b></p><ul><li>AASM Clinical Practice Guideline — diagnostic testing for adult OSA (2017)</li><li>AASM Manual for the Scoring of Sleep and Associated Events (AHI definitions)</li><li>AASM Clinical Practice Guideline — PAP treatment of OSA (2019)</li><li>AASM / AADSM guideline — oral appliance therapy (2015)</li><li>STOP-Bang: Chung F et al., Anesthesiology 2008; Epworth Sleepiness Scale: Johns MW, Sleep 1991</li><li>Modified STOP-Bang: Sangkum L et al., BMC Anesthesiol 2021;21:132, PMID 33906600, <a href="https://doi.org/10.1186/s12871-021-01347-0" target="_blank" rel="noopener">doi:10.1186/s12871-021-01347-0</a></li><li>US FDA — tirzepatide label for OSA (Dec 2024)</li></ul><p class="note">${t(a('Not re-verified line by line against the original documents in this app, and no Thai national OSA guideline is included. Check the current guideline and local availability before acting. N/A is shown wherever data are missing.','แอปนี้ยังไม่ได้ตรวจเทียบทีละบรรทัดกับเอกสารต้นฉบับ และไม่ได้รวมแนวทางเวชปฏิบัติ OSA ของไทย โปรดตรวจแนวทางล่าสุดและความพร้อมใช้ในประเทศก่อนใช้ ข้อมูลที่ไม่มีแสดงเป็น N/A'))}</p></div>`;
 }
 const VIEW={check:vCheck,score:vScore,psg:vPsg,tx:vTx,src:vSrc};
 
@@ -311,6 +314,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{
  const d=e.target.dataset;
  if(d.ck!==undefined){if(e.target.checked)checks[d.ck]=1;else delete checks[d.ck];save();render()}
+ else if(d.sbmod!==undefined){sbMod=e.target.checked;render()}
  else if(d.st!==undefined){stop[d.st]=e.target.checked;render()}
  else if(d.ess!==undefined){ess[d.ess]=e.target.value===''?null:+e.target.value;render()}
 });
