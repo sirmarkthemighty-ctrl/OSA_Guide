@@ -85,7 +85,7 @@ label.ck input.sw:checked::after{transform:translateX(18px)}
 <script>
 const VERSION='1.0.0', DATE='2026-11-16';
 const a=(en,th)=>({en,th});
-let sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin']),modal=null;
+let fromCheck=null,sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin']),modal=null;
 try{lang=localStorage.getItem('osa-lang')||'en';checks=JSON.parse(localStorage.getItem('osa-checks')||'{}')}catch(e){}
 const t=o=>o[lang]||o.en;
 const save=()=>{try{localStorage.setItem('osa-checks',JSON.stringify(checks));localStorage.setItem('osa-lang',lang)}catch(e){}};
@@ -361,12 +361,26 @@ const TX=[
  G("Sleep specialist = doctor certified in sleep medicine by the Medical Council (ENT, pulmonology, neurology, paediatrics, psychiatry). Telemedicine can support follow-up of any treatment.","ผู้เชี่ยวชาญด้านการนอนหลับ = แพทย์ที่ได้วุฒิบัตร/อนุมัติบัตรด้านการนอนหลับจากแพทยสภา (โสต ศอ นาสิก อายุรแพทย์โรคระบบทางเดินหายใจ ประสาทวิทยา กุมารแพทย์ จิตแพทย์) การแพทย์ทางไกลช่วยติดตามได้ทุกวิธีการรักษา"),
  a("Review symptoms (ESS), weight and blood pressure; CPAP download at 1 month and then at least yearly.","ทบทวนอาการ (ESS) น้ำหนัก ความดัน; ดูข้อมูลเครื่อง CPAP ที่ 1 เดือน และอย่างน้อยปีละครั้ง")],"p. 118"]];
 
-const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)'),a('Berlin Questionnaire (3 categories, 9 scored items).','เพิ่มแบบสอบถาม Berlin (3 หมวด 9 ข้อที่นับคะแนน)'),a('AASM guideline recommendations (diagnosis 2017, PAP 2019, oral appliance 2015, surgical referral 2021) added with strength ratings and AASM marks.','เพิ่มคำแนะนำจากแนวทาง AASM (การวินิจฉัย 2017, PAP 2019, อุปกรณ์ในช่องปาก 2015, การส่งต่อผ่าตัด 2021) พร้อมระดับน้ำหนักและเครื่องหมาย AASM'),a('Added the 2025 Thai adult snoring/OSA guideline (Thai Snoring and Sleep Apnea Society, RCOT), merged into the existing tabs (screening notes, test choice and definitions, treatment blocks, follow-up) with TH marks, including surgery, upper-airway investigations, myofunctional therapy and other devices.','เพิ่มแนวทางไทยสำหรับผู้ใหญ่ พ.ศ. 2568 (สมาคมโรคนอนกรนและหยุดหายใจขณะหลับ ราชวิทยาลัย โสต ศอ นาสิกแพทย์ฯ) โดยรวมเข้ากับแท็บเดิม (หมายเหตุการคัดกรอง การเลือกตรวจและนิยาม กรอบการรักษา การติดตาม) พร้อมเครื่องหมาย TH รวมถึงการผ่าตัด การตรวจทางเดินหายใจส่วนบน การฝึกกล้ามเนื้อ และอุปกรณ์อื่น'),a('Look matched to the Bronchodilator Guide (Bedside UI): slate and indigo palette, tinted guide tiles, round theme button.','ปรับหน้าตาให้ตรงกับ Bronchodilator Guide (Bedside UI): โทนสี slate และ indigo ปุ่มนำทางสีอ่อน ปุ่มธีมกลม')]]];
+const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)'),a('Berlin Questionnaire (3 categories, 9 scored items).','เพิ่มแบบสอบถาม Berlin (3 หมวด 9 ข้อที่นับคะแนน)'),a('Checklist is a prompt only (no risk level) and has a "Use in scores" button that copies matching ticks into STOP-Bang and Berlin.','เช็กลิสต์เป็นเพียงตัวช่วยเตือน (ไม่แสดงระดับความเสี่ยง) และมีปุ่ม "ใช้ในคะแนน" คัดลอกข้อที่ตรงไปยัง STOP-Bang และ Berlin'),a('AASM guideline recommendations (diagnosis 2017, PAP 2019, oral appliance 2015, surgical referral 2021) added with strength ratings and AASM marks.','เพิ่มคำแนะนำจากแนวทาง AASM (การวินิจฉัย 2017, PAP 2019, อุปกรณ์ในช่องปาก 2015, การส่งต่อผ่าตัด 2021) พร้อมระดับน้ำหนักและเครื่องหมาย AASM'),a('Added the 2025 Thai adult snoring/OSA guideline (Thai Snoring and Sleep Apnea Society, RCOT), merged into the existing tabs (screening notes, test choice and definitions, treatment blocks, follow-up) with TH marks, including surgery, upper-airway investigations, myofunctional therapy and other devices.','เพิ่มแนวทางไทยสำหรับผู้ใหญ่ พ.ศ. 2568 (สมาคมโรคนอนกรนและหยุดหายใจขณะหลับ ราชวิทยาลัย โสต ศอ นาสิกแพทย์ฯ) โดยรวมเข้ากับแท็บเดิม (หมายเหตุการคัดกรอง การเลือกตรวจและนิยาม กรอบการรักษา การติดตาม) พร้อมเครื่องหมาย TH รวมถึงการผ่าตัด การตรวจทางเดินหายใจส่วนบน การฝึกกล้ามเนื้อ และอุปกรณ์อื่น'),a('Look matched to the Bronchodilator Guide (Bedside UI): slate and indigo palette, tinted guide tiles, round theme button.','ปรับหน้าตาให้ตรงกับ Bronchodilator Guide (Bedside UI): โทนสี slate และ indigo ปุ่มนำทางสีอ่อน ปุ่มธีมกลม')]]];
 
 /* ---------- render ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const det=(k,c,title,body,cnt)=>`<details class="b ${c}" data-k="${k}"${openSet.has(k)?' open':''}><summary><span>${title}</span>${cnt?`<span class="cnt">${cnt}</span>`:''}</summary><div class="in">${body}</div></details>`;
 
+const STOPMAP=[[0,['sx0'],a('Snoring','กรนดัง')],[1,['dx0','dx1','dx3'],a('Tired','เหนื่อย/ง่วง')],[2,['sx1'],a('Observed apnoea','มีคนเห็นหยุดหายใจ')],[3,['cm0'],a('Pressure (hypertension)','ความดันสูง')],[6,['sg1'],a('Neck > 40 cm','รอบคอ > 40 ซม.')]];
+function sendToScores(){
+ const done=[];
+ STOPMAP.forEach(([i,keys,nm])=>{if(keys.some(k=>checks[k])){stop[i]=true;done.push(nm)}});
+ let berN=0;if(checks.cm0){ber[7]=0;berN++}if(checks.dx6){ber[6]=0;berN++}
+ fromCheck={done,berN};
+}
+function fillNote(){
+ if(!fromCheck)return '';
+ const {done,berN}=fromCheck;
+ const l=done.map(x=>t(x)).join(', ');
+ const msg=done.length||berN?t(a('Filled from the checklist — STOP-Bang: ','เติมจากเช็กลิสต์ — STOP-Bang: '))+(l||'—')+(berN?t(a('; Berlin: '+berN+' item(s) (hypertension, drowsy driving). ','; Berlin: '+berN+' ข้อ (ความดันสูง ง่วงขณะขับรถ) ')):'. ')+t(a('Answer BMI, age and sex yourself (the checklist uses different cut-offs), and the Epworth items.','กรอก BMI อายุ และเพศเองเพราะเช็กลิสต์ใช้เกณฑ์ต่างกัน รวมถึงข้อของ Epworth')):t(a('Nothing ticked in the checklist matches the score items yet.','ยังไม่มีข้อที่ติ๊กในเช็กลิสต์ที่ตรงกับข้อของคะแนน'));
+ return '<div class="res indigo" style="display:flex;gap:10px;align-items:flex-start;justify-content:space-between"><small style="margin:0;font-weight:500">'+msg+'</small><button class="btn" data-act="dismissfill" aria-label="OK">OK</button></div>';
+}
 function vCheck(){
  let tot=0,all=0;
  const bl=GROUPS.map(([k,c,ti,items])=>{
@@ -378,12 +392,12 @@ function vCheck(){
  let msg=t(a('Tick what you find. This is a prompt for testing, not a diagnosis.','ติ๊กสิ่งที่พบ นี่เป็นตัวช่วยตัดสินใจส่งตรวจ ไม่ใช่การวินิจฉัย'));
  let c='slate';
  if(tot){
-  if(rf){c='orange';msg=t(a('Red flag present: arrange a sleep study promptly; in-lab PSG is preferred.','มีสัญญาณเตือน: ส่งตรวจการนอนหลับโดยเร็ว แนะนำ PSG ในห้องปฏิบัติการ'))}
-  else if((night>=2)&&(day>=1||sg>=2||cm>=1)){c='rose';msg=t(a('Typical symptoms with supporting features: high pre-test probability — complete STOP-Bang and arrange a sleep study.','อาการเข้าได้ร่วมกับปัจจัยสนับสนุน: โอกาสก่อนตรวจสูง — ทำ STOP-Bang และส่งตรวจการนอนหลับ'))}
-  else if(night+day+sg+cm>=3){c='amber';msg=t(a('Some features: complete STOP-Bang and Epworth to decide on testing.','มีบางข้อ: ทำ STOP-Bang และ Epworth เพื่อตัดสินใจส่งตรวจ'))}
-  else{c='emerald';msg=t(a('Few features: low suspicion unless symptoms evolve.','พบน้อยข้อ: ความสงสัยต่ำ ยกเว้นอาการเปลี่ยนแปลง'))}
+  if(rf){c='orange';msg=t(a('Red flag ticked: consider a sleep study soon; in-lab PSG is preferred.','ติ๊กสัญญาณเตือน: พิจารณาตรวจการนอนหลับโดยเร็ว แนะนำ PSG ในห้องปฏิบัติการ'))}
+  else if((night>=2)&&(day>=1||sg>=2||cm>=1)){c='indigo';msg=t(a('Several typical features: consider STOP-Bang and a sleep study.','พบหลายข้อที่เข้าได้: พิจารณาทำ STOP-Bang และตรวจการนอนหลับ'))}
+  else if(night+day+sg+cm>=3){c='indigo';msg=t(a('A few features: consider STOP-Bang and Epworth to decide on testing.','พบบางข้อ: พิจารณาทำ STOP-Bang และ Epworth เพื่อตัดสินใจส่งตรวจ'))}
+  else{c='slate';msg=t(a('Few features ticked: this alone neither rules OSA in nor out.','ติ๊กน้อยข้อ: ข้อมูลนี้อย่างเดียวไม่ได้ยืนยันหรือตัด OSA'))}
  }
- return `<div class="res ${c}" style="display:flex;gap:10px;align-items:flex-start;justify-content:space-between"><div><b>${tot}/${all}</b> ${t(a('items ticked','ข้อที่ติ๊ก'))}<small>${msg}</small></div><button class="btn" data-act="clear">${t(UI.reset)}</button></div>`+bl;
+ return `<div class="res ${c}" style="display:flex;gap:10px;align-items:flex-start;justify-content:space-between"><div><b>${tot}/${all}</b> ${t(a('items ticked','ข้อที่ติ๊ก'))}<small>${msg}</small></div><div style="display:flex;flex-direction:column;gap:6px;flex:0 0 auto"><button class="btn" data-act="tostop" style="color:var(--ac);border-color:var(--ac)" title="${t(a('Copy matching ticks into STOP-Bang and Berlin','คัดลอกข้อที่ตรงไปยัง STOP-Bang และ Berlin'))}">${t(a('Use in scores →','ใช้ในคะแนน →'))}</button><button class="btn" data-act="clear">${t(UI.reset)}</button></div></div>`+bl;
 }
 function berBlock(){
  const r=berRes();
@@ -403,7 +417,7 @@ function vScore(){
  const sb=tog+STOPQ.map(([q],i)=>`<label class="ck"><input type="checkbox" data-st="${i}"${stop[i]?' checked':''}><span>${t(sbMod&&i===4?BMI30:q)}</span></label>`).join('');
  const e=essRes();
  const eb=ESSQ.map((q,i)=>`<label style="display:block;margin:8px 0;font-weight:600">${i+1}. ${t(q)}<select data-ess="${i}"><option value="">—</option>${ESSOPT.map((o,v)=>`<option value="${v}"${ess[i]===v?' selected':''}>${t(o)}</option>`).join('')}</select></label>`).join('');
- return det('stop','indigo','STOP-Bang',sb+`<div class="res ${r.c}"><b>${r.n}/8</b> — ${t(RISKTXT[r.k])}<small>${t(RISKACT[r.k])}</small></div><p class="note">${sbMod?t(a('Modified: 0–2 low · ≥ 3 high. In that study a score ≥ 3 did not significantly predict overall perioperative adverse events, but it did flag difficult ventilation, laryngoscopic view ≥ 3, oxygen need after surgery and ICU admission.','แบบปรับปรุง: 0–2 ต่ำ · ≥ 3 สูง ในการศึกษานี้ คะแนน ≥ 3 ไม่สัมพันธ์กับภาวะแทรกซ้อนรวมอย่างมีนัยสำคัญ แต่บ่งชี้ภาวะใส่ท่อ/ช่วยหายใจยาก laryngoscopic view ≥ 3 ต้องการออกซิเจนหลังผ่าตัด และการเข้า ICU')):t(a('0–2 low · 3–4 intermediate · 5–8 high. Also high risk if ≥ 2 of the first four items plus male, BMI > 35 or neck > 40 cm.','0–2 ต่ำ · 3–4 ปานกลาง · 5–8 สูง และถือว่าสูงถ้า ≥ 2 ใน 4 ข้อแรก ร่วมกับเพศชาย BMI > 35 หรือรอบคอ > 40 ซม.'))}</p>`+lis([SCR[0]]))
+ return fillNote()+det('stop','indigo','STOP-Bang',sb+`<div class="res ${r.c}"><b>${r.n}/8</b> — ${t(RISKTXT[r.k])}<small>${t(RISKACT[r.k])}</small></div><p class="note">${sbMod?t(a('Modified: 0–2 low · ≥ 3 high. In that study a score ≥ 3 did not significantly predict overall perioperative adverse events, but it did flag difficult ventilation, laryngoscopic view ≥ 3, oxygen need after surgery and ICU admission.','แบบปรับปรุง: 0–2 ต่ำ · ≥ 3 สูง ในการศึกษานี้ คะแนน ≥ 3 ไม่สัมพันธ์กับภาวะแทรกซ้อนรวมอย่างมีนัยสำคัญ แต่บ่งชี้ภาวะใส่ท่อ/ช่วยหายใจยาก laryngoscopic view ≥ 3 ต้องการออกซิเจนหลังผ่าตัด และการเข้า ICU')):t(a('0–2 low · 3–4 intermediate · 5–8 high. Also high risk if ≥ 2 of the first four items plus male, BMI > 35 or neck > 40 cm.','0–2 ต่ำ · 3–4 ปานกลาง · 5–8 สูง และถือว่าสูงถ้า ≥ 2 ใน 4 ข้อแรก ร่วมกับเพศชาย BMI > 35 หรือรอบคอ > 40 ซม.'))}</p>`+lis([SCR[0]]))
  +det('ess','amber','Epworth Sleepiness Scale',`<p class="note">${t(a('How likely are you to doze off (not just feel tired) in these situations, recently?','ในช่วงนี้ มีโอกาสเผลอหลับ (ไม่ใช่แค่รู้สึกเหนื่อย) ในสถานการณ์ต่อไปนี้มากเพียงใด'))}</p>${eb}`+lis([SCR[1]])+(e?`<div class="res ${e.c}"><b>${e.s}/24</b> — ${t(ESSTXT[e.k])}<small>${t(a('Above 10 suggests excessive daytime sleepiness; sleepiness may be absent in many OSA patients, so a low score does not exclude OSA.','เกิน 10 บ่งชี้ง่วงกลางวันผิดปกติ ผู้ป่วย OSA จำนวนมากไม่ง่วง คะแนนต่ำจึงไม่ตัด OSA'))}</small></div>`:`<div class="res slate">N/A <small>${t(a('Answer all 8 items.','ตอบให้ครบ 8 ข้อ'))}</small></div>`),e?e.s+'/24':'N/A')
  +berBlock()
  +det('scrnote','slate',t(a('Using the scores','การใช้คะแนนคัดกรอง')),lis(SCR.slice(3).concat([AASM_DX[1]])))
@@ -452,6 +466,8 @@ document.addEventListener('click',e=>{
  else if(ac==='theme'){const d=document.documentElement.classList.toggle('dark');try{localStorage.setItem('osa-theme',d?'dark':'light')}catch(x){}}
  else if(ac==='log')modal=1;
  else if(ac==='close')modal=null;
+ else if(ac==='tostop'){sendToScores();tab='score';openSet.add('stop');openSet.add('ber');render();window.scrollTo(0,0);return}
+ else if(ac==='dismissfill'){fromCheck=null}
  else if(ac==='clear'){checks={};save()}
  render();
 });
