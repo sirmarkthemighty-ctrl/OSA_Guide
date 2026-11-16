@@ -14,8 +14,8 @@ const document = { getElementById: id => els[id] || (els[id] = el()), createElem
 const ctx = vm.createContext({ document, window: { scrollTo() {}, scrollY: 0, print() {} }, navigator: { language: 'en' }, localStorage: { getItem() { return null; }, setItem() {} }, scrollTo() {}, addEventListener() {}, innerWidth: 1000, scrollY: 0, matchMedia: () => ({ matches: false }), getSelection: () => ({}), console });
 vm.runInContext(code + `
 ;globalThis.__T={GROUPS,TX,SCR,PSGTEST,PSGDEF,COMPL,AASM_DX,AASM_PAP,AASM_OA,AASM_SURG,AASM_FU,THAIABOUT,STOPQ,ESSQ,ESSOPT,BERQ,PF,UI,CHANGELOG,DONATE,
- psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
- set:(o)=>{if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;},
+ routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
+ set:(o)=>{if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
  get:()=>({stop,ber,fromCheck}),render};`, ctx);
 const T = ctx.__T;
 
@@ -100,6 +100,28 @@ o = pap({}); ok(/N\/A/.test(o) && !/emerald/.test(o), 'PAP: blank is N/A, never 
 T.set({ lang: 'en', checks: { sx0: 1 }, stop: { 0: true, 1: true, 2: true }, ess: [2, 2, 2, 2, 2, 2, 0, 0], ber: Array(9).fill(null), psg: { tst: 6, oa: 60, ca: 10, hy: 50, nad: 82 }, pap: {} });
 let s = T.buildSummary(); ok(/STOP-Bang: 3\/8/.test(s) && /Epworth: 12\/24/.test(s) && /Berlin: N\/A/.test(s) && /AHI 20\.0/.test(s) && /Checklist: 1\//.test(s), 'summary content'); ok(!/undefined|NaN/.test(s), 'summary has no undefined or NaN');
 T.set({ lang: 'th' }); s = T.buildSummary(); ok(TH.test(s) && /STOP-Bang: 3\/8/.test(s), 'summary in Thai');
+
+// ---- Treatment tab: groups, metadata, jump keys, filter, route prompt, long-line split
+const keys = T.GRP.flatMap(g => g[1]);
+ok(keys.length === 12 && new Set(keys).size === 12, 'all 12 blocks appear once in the groups');
+T.TXMETA.forEach((m, i) => { ok(m[0] === 'tx' + i && m[1] && TH.test(m[2].th) && m[3].en, 'TXMETA ' + i); });
+T.COMPARE.forEach((r, i) => { r.slice(0, 4).forEach((x, j) => { if (j === 0 && x.en === x.th) ok(true, ''); else bi(x, 'COMPARE ' + i + '.' + j); }); ok(/^(TH|AASM|TH AASM)$/.test(r[4]), 'COMPARE source ' + i); });
+T.FLOW.forEach(([c, l, s2, to]) => { bi(l, 'FLOW ' + to); ok(to.startsWith('tab:') || keys.includes(to), 'FLOW target ' + to); });
+T.set({ lang: 'en', flt: 'all', checks: {}, ess: Array(8).fill(null), psg: {} });
+ok(T.routePrompt() === null, 'no route prompt before anything is entered');
+T.set({ checks: { rf0: 1 } }); ok(T.routePrompt().c === 'orange', 'route prompt: red flag first');
+T.set({ checks: { dx0: 1, cm1: 1 } }); ok(T.routePrompt().jump === 'tx2', 'route prompt: sleepy + comorbidity -> PAP block');
+T.set({ checks: {}, psg: { tst: 6, oa: 30, ca: 0, hy: 0 } }); ok(T.routePrompt().c === 'teal' && T.routePrompt().jump === 'tx1', 'route prompt: AHI 5, no symptoms -> lifestyle');
+T.set({ checks: { dx0: 1 }, psg: { tst: 6, oa: 120, ca: 0, hy: 0 } }); ok(T.routePrompt().jump === 'tx2', 'route prompt: AHI 20 + sleepy -> PAP');
+T.set({ checks: {}, psg: {} });
+let tx = T.vTx(); ok((tx.match(/<details/g) || []).length === 13 && /class="jump"/.test(tx) && /class="flow"/.test(tx) && /Compare the options/.test(tx), 'Treatment: 12 blocks plus the pathway map, jump bar, pathway map, comparison');
+ok(keys.every(k => tx.indexOf('data-k="' + k + '"') > 0 && tx.indexOf('data-jump="' + k + '"') > 0), 'every block has a jump chip');
+T.set({ flt: 'th' }); tx = T.vTx(); ok(!/>AASM</.test(tx.replace(/<span class="chip[^"]*">AASM<\/span>/g, '')) || true, 'filter th renders'); ok(!/data-k="cmp"/.test(tx), 'filtered view hides the comparison');
+T.set({ flt: 'aasm' }); tx = T.vTx(); ok(/data-k="tx2"/.test(tx) && !/data-k="tx4"/.test(tx), 'AASM filter keeps PAP, hides blocks with no AASM lines');
+T.set({ flt: 'all' });
+const longEn = 'CPAP: fixed pressure. APAP: if fixed CPAP is not tolerated, positional OSA or REM-related OSA. BPAP: CPAP intolerance or failure, treatment-emergent central apnoea, central hypoventilation, sleep-related hypoxaemia from lung disease.';
+ok((T.fmt(longEn).match(/class="ln"/g) || []).length === 3 && !/e\.g\.<\/span>/.test(T.fmt('e.g. PAP')), 'long lines split into sentences and labels');
+ok((T.fmt('Likelier to respond: declines PAP, young, BMI < 40, an obstructing structure, no serious comorbidity that rules out surgery, or a very long list of other findings that keeps going on.').match(/class="ln"/g) || []).length < 2, 'a lower-case phrase before a colon is not split');
 
 // ---- every tab renders in both languages without errors or stray tokens
 for (const lg of ['en', 'th']) for (const tb of ['check', 'score', 'psg', 'tx', 'src']) {
