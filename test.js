@@ -9,14 +9,14 @@ const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1
 const code = scripts[scripts.length - 1];
 
 const el = () => ({ innerHTML: '', style: {}, dataset: {}, value: '', classList: { add() {}, remove() {}, toggle() { return false; }, contains() { return false; } }, appendChild() {}, setAttribute() {}, addEventListener() {}, querySelector() { return null; } });
-const els = {};
+const els = {}; const store = {};
 const document = { getElementById: id => els[id] || (els[id] = el()), createElement: () => el(), head: el(), documentElement: el(), addEventListener() {}, querySelector() { return null; } };
-const ctx = vm.createContext({ document, window: { scrollTo() {}, scrollY: 0, print() {} }, navigator: { language: 'en' }, localStorage: { getItem() { return null; }, setItem() {} }, scrollTo() {}, addEventListener() {}, innerWidth: 1000, scrollY: 0, matchMedia: () => ({ matches: false }), getSelection: () => ({}), console });
+const ctx = vm.createContext({ document, window: { scrollTo() {}, scrollY: 0, print() {} }, navigator: { language: 'en' }, localStorage: { getItem(k) { return store[k] ?? null; }, setItem(k, v) { store[k] = String(v); } }, scrollTo() {}, addEventListener() {}, innerWidth: 1000, scrollY: 0, matchMedia: () => ({ matches: false }), getSelection: () => ({}), console });
 vm.runInContext(code + `
 ;globalThis.__T={GROUPS,TX,SCR,PSGTEST,PSGDEF,COMPL,AASM_DX,AASM_PAP,AASM_OA,AASM_SURG,AASM_FU,THAIABOUT,STOPQ,ESSQ,ESSOPT,BERQ,PF,UI,CHANGELOG,DONATE,
- routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
- set:(o)=>{if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
- get:()=>({stop,ber,fromCheck}),render};`, ctx);
+ NEWB,bodyOut,bmiOf,fillStopFromBody,resetAll,saveAll,loadAll,routePrompt,GRP,TXMETA,COMPARE,FLOW,fmt,psgNums,psgOut,stopRisk,essRes,berRes,papOut,buildSummary,sendToScores,vCheck,vScore,vPsg,vTx,vSrc,strip,summaryModal,donateModal,
+ set:(o)=>{if('body'in o)body=o.body;if('psg'in o)psg=o.psg;if('stop'in o)stop=o.stop;if('sb'in o)sbMod=o.sb;if('ess'in o)ess=o.ess;if('ber'in o)ber=o.ber;if('pap'in o)pap=o.pap;if('checks'in o)checks=o.checks;if('lang'in o)lang=o.lang;if('tab'in o)tab=o.tab;if('flt'in o)txFlt=o.flt;},
+ get:()=>({stop,ber,fromCheck,checks,body,psg,pap,sbMod}),render};`, ctx);
 const T = ctx.__T;
 
 let pass = 0; const fails = [];
@@ -103,7 +103,7 @@ T.set({ lang: 'th' }); s = T.buildSummary(); ok(TH.test(s) && /STOP-Bang: 3\/8/.
 
 // ---- Treatment tab: groups, metadata, jump keys, filter, route prompt, long-line split
 const keys = T.GRP.flatMap(g => g[1]);
-ok(keys.length === 12 && new Set(keys).size === 12, 'all 12 blocks appear once in the groups');
+ok(keys.length === 15 && new Set(keys).size === 15, 'all 15 blocks appear once in the groups');
 T.TXMETA.forEach((m, i) => { ok(m[0] === 'tx' + i && m[1] && TH.test(m[2].th) && m[3].en, 'TXMETA ' + i); });
 T.COMPARE.forEach((r, i) => { r.slice(0, 4).forEach((x, j) => { if (j === 0 && x.en === x.th) ok(true, ''); else bi(x, 'COMPARE ' + i + '.' + j); }); ok(/^(TH|AASM|TH AASM)$/.test(r[4]), 'COMPARE source ' + i); });
 T.FLOW.forEach(([c, l, s2, to]) => { bi(l, 'FLOW ' + to); ok(to.startsWith('tab:') || keys.includes(to), 'FLOW target ' + to); });
@@ -114,7 +114,7 @@ T.set({ checks: { dx0: 1, cm1: 1 } }); ok(T.routePrompt().jump === 'tx2', 'route
 T.set({ checks: {}, psg: { tst: 6, oa: 30, ca: 0, hy: 0 } }); ok(T.routePrompt().c === 'teal' && T.routePrompt().jump === 'tx1', 'route prompt: AHI 5, no symptoms -> lifestyle');
 T.set({ checks: { dx0: 1 }, psg: { tst: 6, oa: 120, ca: 0, hy: 0 } }); ok(T.routePrompt().jump === 'tx2', 'route prompt: AHI 20 + sleepy -> PAP');
 T.set({ checks: {}, psg: {} });
-let tx = T.vTx(); ok((tx.match(/<details/g) || []).length === 13 && /class="jump"/.test(tx) && /class="flow"/.test(tx) && /Compare the options/.test(tx), 'Treatment: 12 blocks plus the pathway map, jump bar, pathway map, comparison');
+let tx = T.vTx(); ok((tx.match(/<details/g) || []).length === 16 && /class="jump"/.test(tx) && /class="flow"/.test(tx) && /Compare the options/.test(tx), 'Treatment: 15 blocks plus the pathway map, jump bar, pathway map, comparison');
 ok(keys.every(k => tx.indexOf('data-k="' + k + '"') > 0 && tx.indexOf('data-jump="' + k + '"') > 0), 'every block has a jump chip');
 T.set({ flt: 'th' }); tx = T.vTx(); ok(!/>AASM</.test(tx.replace(/<span class="chip[^"]*">AASM<\/span>/g, '')) || true, 'filter th renders'); ok(!/data-k="cmp"/.test(tx), 'filtered view hides the comparison');
 T.set({ flt: 'aasm' }); tx = T.vTx(); ok(/data-k="tx2"/.test(tx) && !/data-k="tx4"/.test(tx), 'AASM filter keeps PAP, hides blocks with no AASM lines');
@@ -123,6 +123,26 @@ const longEn = 'CPAP: fixed pressure. APAP: if fixed CPAP is not tolerated, posi
 ok((T.fmt(longEn).match(/class="ln"/g) || []).length === 3 && !/e\.g\.<\/span>/.test(T.fmt('e.g. PAP')), 'long lines split into sentences and labels');
 ok((T.fmt('Read the figure (pp. 90–91), which matches the pathway below. And then a second sentence that is long enough to trigger the splitting of long lines in the list view here.').match(/class="ln"/g) || []).length === 2, 'page references such as pp. 90 do not split a sentence');
 ok((T.fmt('Likelier to respond: declines PAP, young, BMI < 40, an obstructing structure, no serious comorbidity that rules out surgery, or a very long list of other findings that keeps going on.').match(/class="ln"/g) || []).length < 2, 'a lower-case phrase before a colon is not split');
+
+// ---- new blocks (PAP fixes, central apnoea, OHS) are bilingual and sourced
+Object.entries(T.NEWB).forEach(([k, [c, ti, items, src, ic, sub]]) => { bi(ti, 'NEWB ' + k); bi(sub, 'NEWB sub ' + k); items.forEach((x, i) => bi(x, 'NEWB ' + k + '.' + i)); ok(ic && c, 'NEWB meta ' + k); });
+ok(T.NEWB.csa[2].filter(x => x.g === 2).length === 7, 'CSA block carries the 7 AASM 2025 lines'); ok(T.NEWB.ohs[2].filter(x => x.g === 3).length === 5, 'OHS block carries the 5 ATS 2019 recommendations');
+ok(T.NEWB.csa[2].concat(T.NEWB.ohs[2]).filter(x => x.g).every(x => /\((Conditional|Strong)/.test(x.en) || /Good practice/.test(x.en)), 'guideline lines carry a strength');
+
+// ---- body measurements -> STOP-Bang
+T.set({ lang: 'en', body: { w: 80, h: 160, age: 56, neck: 42, sex: 'm' }, stop: {}, sb: false });
+ok(Math.abs(T.bmiOf() - 31.25) < 0.01, 'BMI 31.25');
+T.fillStopFromBody(); let gg = T.get();
+ok(gg.stop[4] === false && gg.stop[5] === true && gg.stop[6] === true && gg.stop[7] === true, 'body fill (original): BMI 31 is not > 35; age, neck, male are');
+T.set({ sb: true }); T.fillStopFromBody(); gg = T.get(); ok(gg.stop[4] === true, 'body fill (modified Thai): BMI 31 is > 30'); T.set({ sb: false });
+T.set({ body: { w: 70, h: 170 } }); T.fillStopFromBody(); gg = T.get(); ok(gg.stop[4] === false && gg.stop[5] === true, 'body fill only touches the fields entered (age left as before)');
+T.set({ body: {} }); ok(/N\/A/.test(T.bodyOut()) && !/emerald/.test(T.bodyOut().replace(/res row slate/g, '')), 'blank measurements show N/A');
+
+// ---- data kept on the device, New patient clears it
+T.set({ checks: { sx0: 1 }, stop: { 0: true }, psg: { tst: 6 }, pap: { use: 4 }, body: { age: 50 } }); T.saveAll();
+T.set({ checks: {}, stop: {}, psg: {}, pap: {}, body: {} }); T.loadAll(); gg = T.get();
+ok(gg.checks.sx0 === 1 && gg.stop[0] === true && gg.psg.tst === 6 && gg.pap.use === 4 && gg.body.age === 50, 'entries survive save and load');
+T.resetAll(); T.loadAll(); gg = T.get(); ok(!Object.keys(gg.checks).length && !Object.keys(gg.psg).length && !Object.keys(gg.body).length, 'New patient clears everything, also in storage');
 
 // ---- every tab renders in both languages without errors or stray tokens
 for (const lg of ['en', 'th']) for (const tb of ['check', 'score', 'psg', 'tx', 'src']) {
