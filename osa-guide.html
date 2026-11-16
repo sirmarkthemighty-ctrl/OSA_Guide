@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSA Guide</title>
+<script>try{if(localStorage.getItem('osa-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}</script>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--inset:#f8fafc;--bd:#e2e8f0;--tx:#0f172a;--mu:#64748b;--ac:#4f46e5}
+html.dark{--bg:#0b1220;--card:#151f32;--inset:#101a2b;--bd:#263449;--tx:#e2e8f0;--mu:#94a3b8;--ac:#818cf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 'IBM Plex Sans','IBM Plex Sans Thai',system-ui,'Segoe UI',sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:0 12px 40px}
+header{padding:14px 0 8px;display:flex;gap:8px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+h1{margin:0;font-size:22px;font-weight:800}
+.sub{font-size:11px;color:var(--mu)}
+.hb{display:flex;gap:6px;align-items:center}
+.pill{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:4px 10px;font:700 11px inherit;font-family:inherit;cursor:pointer}
+.pill:hover{border-color:var(--ac)}
+.round{width:32px;height:32px;padding:0;display:grid;place-items:center;font-size:15px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:7px 12px;font:700 12px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 1px 2px #0003}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 1px 2px #0001}
+details.b{border:1px solid color-mix(in srgb,var(--c) 35%,var(--bd));border-left:4px solid var(--c);border-radius:12px;background:color-mix(in srgb,var(--c) 6%,var(--card));margin:10px 0;overflow:hidden}
+details.b>summary{cursor:pointer;list-style:none;padding:10px 12px;font-weight:800;font-size:14px;display:flex;gap:8px;align-items:center;justify-content:space-between;color:var(--c)}
+details.b>summary::-webkit-details-marker{display:none}
+details.b>summary::after{content:'▾';font-size:12px;transition:transform .15s}
+details.b[open]>summary::after{transform:rotate(180deg)}
+details.b>.in{padding:2px 12px 12px}
+.cnt{font-size:10px;font-weight:800;border:1px solid var(--c);border-radius:999px;padding:0 7px;margin-left:auto;margin-right:6px}
+.indigo{--c:#4f46e5}.amber{--c:#b45309}.emerald{--c:#047857}.rose{--c:#be123c}.orange{--c:#c2410c}.sky{--c:#0369a1}.violet{--c:#6d28d9}.slate{--c:#475569}
+html.dark .indigo{--c:#a5b4fc}html.dark .amber{--c:#fbbf24}html.dark .emerald{--c:#6ee7b7}html.dark .rose{--c:#fda4af}html.dark .orange{--c:#fdba74}html.dark .sky{--c:#7dd3fc}html.dark .violet{--c:#c4b5fd}html.dark .slate{--c:#cbd5e1}
+label.ck{display:flex;gap:9px;align-items:flex-start;padding:7px 4px;border-top:1px solid var(--bd);cursor:pointer}
+label.ck:first-child{border-top:0}
+label.ck input{width:18px;height:18px;margin-top:1px;flex:0 0 auto;accent-color:var(--c)}
+label.ck span small{display:block;color:var(--mu);font-size:11px}
+.res{border-radius:12px;padding:10px 12px;margin-top:10px;border:1px solid var(--c);background:color-mix(in srgb,var(--c) 12%,var(--card));font-weight:700}
+.res b{font-size:20px}
+.res small{display:block;font-weight:400;color:var(--tx);margin-top:4px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.grid label{font-size:11px;font-weight:700;color:var(--mu);display:block}
+input[type=number],select{width:100%;margin-top:2px;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--inset);color:var(--tx);font:inherit}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border:1px solid var(--bd);padding:5px 7px;text-align:left;vertical-align:top}
+th{background:var(--inset)}
+.tw{overflow-x:auto}
+ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
+.note{font-size:11px;color:var(--mu)}
+.chip{display:inline-block;font-size:10px;font-weight:800;border:1px solid var(--c);color:var(--c);border-radius:5px;padding:0 5px;margin-right:4px}
+.btn{border:1px solid var(--bd);background:var(--inset);color:var(--tx);border-radius:8px;padding:5px 10px;font:700 11px inherit;font-family:inherit;cursor:pointer}
+.modal{position:fixed;inset:0;background:#0f172ab3;backdrop-filter:blur(3px);z-index:50;display:grid;place-items:center;padding:12px}
+.modal>div{background:var(--card);border-radius:16px;max-width:520px;width:100%;max-height:85vh;overflow:auto;padding:16px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const VERSION='1.0.0', DATE='2026-11-16';
+const a=(en,th)=>({en,th});
+let lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin']),modal=null;
+try{lang=localStorage.getItem('osa-lang')||'en';checks=JSON.parse(localStorage.getItem('osa-checks')||'{}')}catch(e){}
+const t=o=>o[lang]||o.en;
+const save=()=>{try{localStorage.setItem('osa-checks',JSON.stringify(checks));localStorage.setItem('osa-lang',lang)}catch(e){}};
+
+const UI={
+title:a('OSA Guide','คู่มือโรคหยุดหายใจขณะหลับ (OSA)'),
+sub:a('Obstructive sleep apnoea — checklist, screening, polysomnogram, treatment','Obstructive sleep apnoea — เช็กลิสต์ การคัดกรอง ผลตรวจการนอนหลับ การรักษา'),
+by:a('Made by Warodom Phaenthong, M.D. · Reference tool, not a substitute for clinical judgement','จัดทำโดย Warodom Phaenthong, M.D. · เครื่องมืออ้างอิง ไม่ทดแทนดุลยพินิจทางคลินิก'),
+tabs:[['check',a('Checklist','เช็กลิสต์')],['score',a('Screening','คัดกรอง')],['psg',a('Polysomnogram','ผล PSG')],['tx',a('Treatment','การรักษา')],['src',a('Sources','แหล่งอ้างอิง')]],
+reset:a('Clear all','ล้างทั้งหมด'),
+};
+
+/* ---------- checklist data ---------- */
+const GROUPS=[
+['sx','indigo',a('Night-time symptoms','อาการตอนกลางคืน'),[
+ [a('Loud, habitual snoring','กรนดังเป็นประจำ')],
+ [a('Witnessed apnoeas (partner sees pauses in breathing)','มีคนเห็นหยุดหายใจขณะหลับ')],
+ [a('Gasping / choking arousals','สะดุ้งตื่น หายใจเฮือก สำลัก')],
+ [a('Nocturia ≥ 2 per night','ปัสสาวะกลางคืน ≥ 2 ครั้ง')],
+ [a('Restless, fragmented sleep; night sweats','นอนไม่สนิท ตื่นบ่อย เหงื่อออกกลางคืน')],
+ [a('Dry mouth / sore throat on waking','ปากคอแห้งตอนตื่น')],
+ [a('Night-time reflux','กรดไหลย้อนตอนกลางคืน')]]],
+['dx','amber',a('Daytime symptoms','อาการตอนกลางวัน'),[
+ [a('Excessive daytime sleepiness','ง่วงนอนมากตอนกลางวัน')],
+ [a('Unrefreshing sleep','นอนแล้วไม่สดชื่น')],
+ [a('Morning headache','ปวดศีรษะตอนเช้า')],
+ [a('Fatigue','อ่อนเพลีย')],
+ [a('Poor concentration / memory','สมาธิ/ความจำลดลง')],
+ [a('Irritability, low mood','หงุดหงิด ซึมเศร้า')],
+ [a('Drowsy driving or near-miss','ง่วงขณะขับรถ หรือเกือบเกิดอุบัติเหตุ')],
+ [a('Reduced libido / erectile dysfunction','ความต้องการทางเพศลดลง / หย่อนสมรรถภาพ')]]],
+['sg','emerald',a('Signs on examination','อาการแสดงจากการตรวจ'),[
+ [a('Obesity (BMI ≥ 25 Asian cut-off; ≥ 30 general)','อ้วน (BMI ≥ 25 เกณฑ์เอเชีย; ≥ 30 ทั่วไป)')],
+ [a('Neck circumference > 40 cm','รอบคอ > 40 ซม.')],
+ [a('Crowded oropharynx (Mallampati III–IV)','ช่องคอแคบ (Mallampati III–IV)')],
+ [a('Enlarged tonsils (grade 3–4)','ต่อมทอนซิลโต (เกรด 3–4)')],
+ [a('Retrognathia / micrognathia / overjet','คางร่น/เล็ก ฟันบนยื่น')],
+ [a('Macroglossia / scalloped tongue','ลิ้นโต ขอบลิ้นเป็นรอยฟัน')],
+ [a('Narrow / high-arched palate','เพดานปากแคบ/สูง')],
+ [a('Nasal obstruction (septal deviation, turbinate hypertrophy)','จมูกอุดตัน (ผนังกั้นจมูกคด, เยื่อจมูกบวมโต)')]]],
+['cm','rose',a('Risk factors & comorbidities','ปัจจัยเสี่ยงและโรคร่วม'),[
+ [a('Hypertension (especially resistant / non-dipping)','ความดันสูง (โดยเฉพาะคุมยาก/ไม่ลดลงกลางคืน)')],
+ [a('Atrial fibrillation / arrhythmia','AF / หัวใจเต้นผิดจังหวะ')],
+ [a('Heart failure / coronary disease','หัวใจล้มเหลว / โรคหลอดเลือดหัวใจ')],
+ [a('Stroke / TIA','โรคหลอดเลือดสมอง / TIA')],
+ [a('Type 2 diabetes / metabolic syndrome','เบาหวานชนิดที่ 2 / metabolic syndrome')],
+ [a('Pulmonary hypertension','ความดันปอดสูง')],
+ [a('Fatty liver (MASLD)','ไขมันพอกตับ (MASLD)')],
+ [a('Male, age > 50, post-menopause','เพศชาย อายุ > 50 วัยหมดประจำเดือน')],
+ [a('Alcohol / sedatives / opioids','แอลกอฮอล์ / ยานอนหลับ / opioid')],
+ [a('Hypothyroidism, acromegaly, PCOS','ไทรอยด์ต่ำ, acromegaly, PCOS')]]],
+['rf','orange',a('Red flags — act sooner / choose in-lab PSG','สัญญาณเตือน — รีบดำเนินการ / เลือก PSG ในห้องปฏิบัติการ'),[
+ [a('Drowsy driving, or safety-critical job (driver, pilot, machinery)','ง่วงขณะขับรถ หรืออาชีพเสี่ยง (คนขับ นักบิน เครื่องจักร)')],
+ [a('Awake SpO₂ < 94 % or serum HCO₃ ≥ 27 (think obesity hypoventilation)','SpO₂ ขณะตื่น < 94 % หรือ HCO₃ ≥ 27 (นึกถึง obesity hypoventilation)')],
+ [a('Significant cardiopulmonary or neuromuscular disease','โรคหัวใจ-ปอด หรือโรคกล้ามเนื้อ/ประสาทที่รุนแรง')],
+ [a('Opioid use or suspected central apnoea (HF, stroke)','ใช้ opioid หรือสงสัย central apnoea (HF, stroke)')],
+ [a('Pregnancy','ตั้งครรภ์')],
+ [a('Surgery under GA / sedation planned','มีแผนผ่าตัดดมยา/ให้ยาระงับประสาท')],
+ [a('Polycythaemia, cor pulmonale','เลือดข้น, cor pulmonale')]]],
+];
+
+/* ---------- STOP-Bang / ESS ---------- */
+const STOPQ=[
+ [a('Snoring — loud (heard through a closed door)?','กรนเสียงดัง (ได้ยินผ่านประตูปิด)?')],
+ [a('Tired — often tired, fatigued or sleepy in the daytime?','เหนื่อย/ง่วงตอนกลางวันบ่อย?')],
+ [a('Observed — anyone seen you stop breathing in sleep?','มีคนเห็นหยุดหายใจขณะหลับ?')],
+ [a('Pressure — treated or diagnosed hypertension?','ความดันโลหิตสูง (ได้รับการรักษาหรือวินิจฉัย)?')],
+ [a('BMI > 35 kg/m²?','BMI > 35 กก./ม.²?')],
+ [a('Age > 50 years?','อายุ > 50 ปี?')],
+ [a('Neck circumference > 40 cm?','รอบคอ > 40 ซม.?')],
+ [a('Gender — male?','เพศชาย?')]];
+const ESSQ=[a('Sitting and reading','นั่งอ่านหนังสือ'),a('Watching TV','ดูโทรทัศน์'),a('Sitting inactive in a public place (theatre, meeting)','นั่งเฉยๆ ในที่สาธารณะ (โรงหนัง ประชุม)'),a('Passenger in a car for 1 hour without a break','นั่งรถเป็นผู้โดยสารต่อเนื่อง 1 ชม.'),a('Lying down to rest in the afternoon','เอนตัวพักตอนบ่าย'),a('Sitting and talking to someone','นั่งคุยกับผู้อื่น'),a('Sitting quietly after lunch (no alcohol)','นั่งเงียบๆ หลังอาหารกลางวัน (ไม่ดื่มแอลกอฮอล์)'),a('In a car, stopped a few minutes in traffic','อยู่ในรถ หยุดติดไฟแดง/การจราจรไม่กี่นาที')];
+const ESSOPT=[a('0 — would never doze','0 — ไม่เคยเผลอหลับ'),a('1 — slight chance','1 — มีโอกาสเล็กน้อย'),a('2 — moderate chance','2 — มีโอกาสปานกลาง'),a('3 — high chance','3 — มีโอกาสสูง')];
+
+function stopRisk(){
+ const n=STOPQ.reduce((s,_,i)=>s+(stop[i]?1:0),0);
+ const s4=[0,1,2,3].filter(i=>stop[i]).length;
+ const mod=stop[7]||stop[4]||stop[6];
+ let k,c;
+ if(n>=5||(n>=3&&s4>=2&&mod)){k='high';c='rose'}else if(n>=3){k='int';c='amber'}else{k='low';c='emerald'}
+ return{n,k,c};
+}
+const RISKTXT={low:a('Low risk of moderate–severe OSA','ความเสี่ยงต่ำต่อ OSA ระดับปานกลาง–รุนแรง'),int:a('Intermediate risk','ความเสี่ยงปานกลาง'),high:a('High risk of moderate–severe OSA','ความเสี่ยงสูงต่อ OSA ระดับปานกลาง–รุนแรง')};
+const RISKACT={low:a('Test only if symptoms or red flags persist.','ตรวจเมื่ออาการหรือสัญญาณเตือนยังคงอยู่'),int:a('Consider a sleep study; use clinical judgement and the checklist.','พิจารณาตรวจการนอนหลับ ใช้ดุลยพินิจและเช็กลิสต์'),high:a('Arrange a sleep study (PSG or home test per the Polysomnogram tab).','ส่งตรวจการนอนหลับ (PSG หรือ home test ตามแท็บ ผล PSG)')};
+function essRes(){
+ if(ess.some(v=>v===null))return null;
+ const s=ess.reduce((x,y)=>x+y,0);
+ const k=s<=10?0:s<=12?1:s<=15?2:3;
+ return{s,k,c:['emerald','amber','orange','rose'][k]};
+}
+const ESSTXT=[a('Normal daytime sleepiness (0–10)','ง่วงกลางวันปกติ (0–10)'),a('Mild excessive sleepiness (11–12)','ง่วงมากผิดปกติเล็กน้อย (11–12)'),a('Moderate excessive sleepiness (13–15)','ง่วงมากผิดปกติปานกลาง (13–15)'),a('Severe excessive sleepiness (16–24)','ง่วงมากผิดปกติรุนแรง (16–24)')];
+
+/* ---------- PSG ---------- */
+const PF=[['tst',a('Total sleep time (h)','เวลานอนหลับรวม (ชม.)')],['oa',a('Obstructive + mixed apnoeas (n)','obstructive + mixed apnoea (ครั้ง)')],['ca',a('Central apnoeas (n)','central apnoea (ครั้ง)')],['hy',a('Hypopnoeas (n)','hypopnoea (ครั้ง)')],['nad',a('SpO₂ nadir (%)','SpO₂ ต่ำสุด (%)')],['t90',a('Time SpO₂ < 90 % (% of TST)','เวลา SpO₂ < 90 % (% ของ TST)')],['sup',a('Supine AHI','AHI ท่านอนหงาย')],['non',a('Non-supine AHI','AHI ท่านอื่น')]];
+const num=v=>(v===''||v==null||isNaN(+v))?null:+v;
+function psgOut(){
+ const g=k=>num(psg[k]);
+ const tst=g('tst'),oa=g('oa'),ca=g('ca'),hy=g('hy');
+ const ev=[oa,ca,hy];
+ const lines=[];let head='';
+ let ahi=null;
+ if(tst&&tst>0&&ev.every(v=>v!==null)){ahi=(oa+ca+hy)/tst}
+ const mk=(c,txt)=>`<div class="res ${c}">${txt}</div>`;
+ if(ahi===null){
+  head=mk('slate',`<b>AHI N/A</b><small>${t(a('Enter total sleep time, apnoeas and hypopnoeas. For a home test use recording time instead of sleep time (it is then REI / pAHI, which under-reads AHI).','ใส่เวลานอนหลับรวม จำนวน apnoea และ hypopnoea ถ้าเป็น home test ใช้เวลาบันทึกแทน (เรียก REI / pAHI ซึ่งมักต่ำกว่า AHI จริง)'))}</small>`);
+ }else{
+  const sev=ahi<5?0:ahi<15?1:ahi<30?2:3;
+  const c=['emerald','amber','orange','rose'][sev];
+  const nm=[a('Normal (AHI < 5)','ปกติ (AHI < 5)'),a('Mild OSA (5 to < 15)','OSA เล็กน้อย (5 ถึง < 15)'),a('Moderate OSA (15 to < 30)','OSA ปานกลาง (15 ถึง < 30)'),a('Severe OSA (≥ 30)','OSA รุนแรง (≥ 30)')][sev];
+  const cen=ca/(oa+ca+hy||1)*100;
+  let ex=`${t(a('Events','เหตุการณ์'))}: ${oa+ca+hy} / ${tst} h`;
+  if(oa+ca+hy>0)ex+=` · ${t(a('central share','สัดส่วน central'))} ${cen.toFixed(0)} %`;
+  head=mk(c,`<b>AHI ${ahi.toFixed(1)} /h</b> — ${t(nm)}<small>${ex}</small>`);
+  if(ca>=5&&cen>50)lines.push(t(a('Central events > 50 % of events and ≥ 5/h: central sleep apnoea pattern — look for heart failure, opioids, stroke, high altitude; CPAP alone may not suffice, consider specialist review.','central > 50 % ของเหตุการณ์ และ ≥ 5/ชม.: รูปแบบ central sleep apnoea — หาสาเหตุ HF, opioid, stroke, ที่สูง; CPAP อย่างเดียวอาจไม่พอ ควรปรึกษาผู้เชี่ยวชาญ')));
+  else if(ca>=5)lines.push(t(a('Central apnoeas ≥ 5/h but < 50 % of events: mixed picture; recheck on CPAP (treatment-emergent central apnoea).','central apnoea ≥ 5/ชม. แต่ < 50 %: ภาพผสม; ประเมินซ้ำหลังเริ่ม CPAP (treatment-emergent central apnoea)')));
+  if(sev===0)lines.push(t(a('AHI < 5 with typical symptoms: consider UARS (RERA-based), repeat study, or other sleep disorders.','AHI < 5 แต่อาการเข้าได้: นึกถึง UARS (นับ RERA) ตรวจซ้ำ หรือโรคการนอนอื่น')));
+ }
+ const nad=g('nad'),t90=g('t90'),sup=g('sup'),non=g('non');
+ if(nad!==null){
+  const lv=nad>=90?[a('no desaturation','ไม่มี desaturation'),'emerald']:nad>=85?[a('mild desaturation (85–89 %)','desaturation เล็กน้อย (85–89 %)'),'amber']:nad>=80?[a('moderate (80–84 %)','ปานกลาง (80–84 %)'),'orange']:[a('severe (< 80 %)','รุนแรง (< 80 %)'),'rose'];
+  lines.push(`<span class="chip ${lv[1]}">SpO₂ ${nad} %</span>${t(lv[0])} <span class="note">${t(a('(common grading, not an AASM definition)','(เกณฑ์ที่ใช้กันทั่วไป ไม่ใช่นิยาม AASM)'))}</span>`);
+ }
+ if(t90!==null&&t90>=10)lines.push(t(a(`T90 ${t90} %: marked nocturnal hypoxaemia (≥ 10 % is commonly used) — check awake SpO₂ and bicarbonate for obesity hypoventilation; consider BPAP/oxygen assessment.`,`T90 ${t90} %: ภาวะพร่องออกซิเจนกลางคืนชัดเจน (≥ 10 % ที่ใช้กัน) — ตรวจ SpO₂ ขณะตื่นและ HCO₃ หา obesity hypoventilation; พิจารณา BPAP/ประเมินออกซิเจน`)));
+ if(sup!==null&&non!==null){
+  if(non<sup&&sup>=2*non&&non<5)lines.push(t(a('Positional OSA (supine AHI ≥ 2× non-supine and non-supine < 5): positional therapy is an option, ideally alongside other measures.','Positional OSA (AHI ท่านอนหงาย ≥ 2 เท่าของท่าอื่น และท่าอื่น < 5): ใช้การจัดท่านอนได้ แนะนำร่วมกับวิธีอื่น')));
+  else if(non<sup&&sup>=2*non)lines.push(t(a('Supine-predominant (supine ≥ 2× non-supine) but non-supine AHI is still ≥ 5: positional therapy alone is unlikely to be enough.','เด่นในท่านอนหงาย (≥ 2 เท่า) แต่ท่าอื่นยัง ≥ 5: การจัดท่านอนอย่างเดียวคงไม่พอ')));
+  else lines.push(t(a('Not position-dependent.','ไม่ขึ้นกับท่านอน')));
+ }
+ const na=[];
+ PF.forEach(([k,l])=>{if(g(k)===null)na.push(t(l))});
+ const miss=na.length?`<div class="note" style="margin-top:8px">N/A: ${na.join(', ')}</div>`:'';
+ return head+(lines.length?`<ul style="margin-top:8px">${lines.map(l=>`<li>${l}</li>`).join('')}</ul>`:'')+miss;
+}
+
+/* ---------- treatment ---------- */
+const TX=[
+['emerald',a('Step 1 — for every patient','ขั้นที่ 1 — ทุกราย'),[
+ a('Weight loss: aim ≥ 10 % of body weight; lowers AHI but rarely cures moderate–severe disease alone.','ลดน้ำหนัก: เป้า ≥ 10 % ของน้ำหนักตัว ช่วยลด AHI แต่มักไม่หายขาดในรายปานกลาง–รุนแรง'),
+ a('Avoid alcohol, sedatives and opioids close to bedtime; stop smoking.','งดแอลกอฮอล์ ยานอนหลับ และ opioid ใกล้เวลานอน; เลิกบุหรี่'),
+ a('Regular sleep schedule, 7+ h in bed; treat nasal obstruction (nasal steroid, septal / turbinate care).','นอนเป็นเวลา อย่างน้อย 7 ชม.; รักษาจมูกอุดตัน (พ่นสเตียรอยด์ แก้ผนังกั้นจมูก/เยื่อจมูก)'),
+ a('Positional therapy (avoid supine) if the study shows positional OSA.','จัดท่านอน (หลีกเลี่ยงนอนหงาย) ถ้าผลเป็น positional OSA'),
+ a('Counsel on drowsy driving; do not drive when sleepy.','แนะนำเรื่องง่วงขณะขับรถ ห้ามขับเมื่อง่วง'),
+ a('Treat comorbidities (hypertension, AF, diabetes) in parallel.','รักษาโรคร่วมไปพร้อมกัน (ความดัน AF เบาหวาน)')]],
+['indigo',a('CPAP — first-line for most symptomatic OSA','CPAP — ทางเลือกแรกในผู้ป่วย OSA ที่มีอาการส่วนใหญ่'),[
+ a('Moderate–severe OSA: offer CPAP. Mild OSA: offer if sleepy, or with hypertension, cardiovascular disease or other comorbidity.','ปานกลาง–รุนแรง: เสนอ CPAP; เล็กน้อย: เสนอเมื่อมีง่วงนอน ความดันสูง โรคหัวใจหลอดเลือด หรือโรคร่วม'),
+ a('Start auto-CPAP (e.g. 4–20 cmH₂O) or fixed pressure from a titration study (in-lab titration if central apnoea, hypoventilation or high-risk comorbidity).','เริ่ม auto-CPAP (เช่น 4–20 cmH₂O) หรือความดันคงที่จากการ titrate (titrate ในห้องปฏิบัติการถ้ามี central apnoea, hypoventilation หรือโรคร่วมเสี่ยงสูง)'),
+ a('Target adherence: ≥ 4 h per night on ≥ 70 % of nights (more is better).','เป้าการใช้: ≥ 4 ชม./คืน ใน ≥ 70 % ของคืน (ยิ่งนานยิ่งดี)'),
+ a('Follow up in the first weeks: mask fit, dry mouth, pressure intolerance, aerophagia; use heated humidifier and desensitisation.','ติดตามช่วงสัปดาห์แรก: หน้ากากพอดี ปากแห้ง ทนความดันไม่ได้ ลมเข้ากระเพาะ; ใช้ humidifier และปรับตัวทีละน้อย'),
+ a('Download data: usage, residual AHI (aim < 5), leak, pressure.','ดูข้อมูลจากเครื่อง: ชั่วโมงใช้ AHI ที่เหลือ (เป้า < 5) การรั่ว ความดัน'),
+ a('Bilevel PAP (BPAP): pressure intolerance, obesity hypoventilation or hypercapnia.','BPAP: ทนความดัน CPAP ไม่ได้ obesity hypoventilation หรือ CO₂ คั่ง')]],
+['sky',a('Oral appliance (mandibular advancement)','เครื่องมือในช่องปาก (mandibular advancement)'),[
+ a('For mild–moderate OSA, or CPAP-intolerant / refusing patients; custom-made by a trained dentist.','สำหรับ OSA เล็กน้อย–ปานกลาง หรือผู้ที่ใช้ CPAP ไม่ได้/ปฏิเสธ; ทำเฉพาะราย โดยทันตแพทย์ที่ผ่านการฝึก'),
+ a('Needs adequate dentition and healthy TMJ; repeat sleep study to confirm effect.','ต้องมีฟันเพียงพอและข้อต่อขากรรไกรปกติ; ตรวจการนอนซ้ำเพื่อยืนยันผล'),
+ a('Side effects: jaw / tooth discomfort, bite change over time.','ผลข้างเคียง: ปวดขากรรไกร/ฟัน การสบฟันเปลี่ยนในระยะยาว')]],
+['violet',a('Surgery & devices','การผ่าตัดและอุปกรณ์'),[
+ a('Adenotonsillectomy when tonsils are enlarged (first choice in children; useful in selected adults).','ตัดทอนซิล เมื่อทอนซิลโต (ทางเลือกแรกในเด็ก; ใช้ในผู้ใหญ่บางราย)'),
+ a('Hypoglossal nerve stimulation: CPAP failure or intolerance, BMI and AHI within the device label limits, no complete concentric collapse on drug-induced sleep endoscopy (DISE). Check current label.','กระตุ้นเส้นประสาท hypoglossal: CPAP ล้มเหลว/ไม่ทน BMI และ AHI อยู่ในเกณฑ์ของอุปกรณ์ ไม่มี complete concentric collapse จาก DISE (ตรวจเกณฑ์ล่าสุด)'),
+ a('Maxillomandibular advancement for skeletal deficiency; uvulopalatopharyngoplasty alone has limited long-term success.','เลื่อนขากรรไกรบนล่าง ในกรณีโครงสร้างกระดูก; UPPP อย่างเดียวผลระยะยาวจำกัด'),
+ a('Bariatric surgery for suitable patients with obesity.','ผ่าตัดลดน้ำหนักในผู้ป่วยอ้วนที่เหมาะสม')]],
+['amber',a('Medicines','ยา'),[
+ a('Tirzepatide: approved by the US FDA (2024) for moderate–severe OSA with obesity; check local availability.','Tirzepatide: US FDA อนุมัติ (2024) สำหรับ OSA ปานกลาง–รุนแรงร่วมกับโรคอ้วน; ตรวจสอบการมีใช้ในประเทศ'),
+ a('Residual sleepiness on well-treated OSA: first exclude poor adherence, other sleep disorders, sedating drugs; wake-promoting drugs (modafinil, solriamfetol) are an option.','ยังง่วงทั้งที่รักษา OSA ดีแล้ว: ตัดสาเหตุอื่นก่อน (ใช้เครื่องไม่พอ โรคการนอนอื่น ยาที่ง่วง) แล้วพิจารณา modafinil, solriamfetol'),
+ a('No drug replaces PAP for airway collapse; avoid sedative-hypnotics where possible.','ไม่มียาที่ทดแทน PAP; หลีกเลี่ยงยานอนหลับถ้าเป็นไปได้')]],
+['rose',a('Peri-operative care','การดูแลช่วงผ่าตัด'),[
+ a('Screen with STOP-Bang before surgery; tell the anaesthetist about suspected or known OSA.','คัดกรองด้วย STOP-Bang ก่อนผ่าตัด แจ้งวิสัญญีถ้าสงสัยหรือเป็น OSA'),
+ a('Bring and use own CPAP after surgery; minimise opioids and sedatives; use multimodal analgesia, head-up position, continuous SpO₂ monitoring.','นำเครื่อง CPAP มาใช้หลังผ่าตัด ลด opioid/ยาสงบ ใช้ยาแก้ปวดหลายกลไก นอนหัวสูง ติดตาม SpO₂ ต่อเนื่อง')]],
+['slate',a('Follow-up','การติดตาม'),[
+ a('Review symptoms (ESS), weight and blood pressure; CPAP download at 1 month and then at least yearly.','ทบทวนอาการ (ESS) น้ำหนัก ความดัน; ดูข้อมูลเครื่อง CPAP ที่ 1 เดือน และอย่างน้อยปีละครั้ง'),
+ a('Repeat sleep study after significant weight change (± 10 %), after surgery / oral appliance, or if symptoms return.','ตรวจการนอนซ้ำเมื่อน้ำหนักเปลี่ยนมาก (± 10 %) หลังผ่าตัด/ใช้เครื่องมือในช่องปาก หรืออาการกลับมา')]],
+];
+
+const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา')]]];
+
+/* ---------- render ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const det=(k,c,title,body,cnt)=>`<details class="b ${c}" data-k="${k}"${openSet.has(k)?' open':''}><summary><span>${title}</span>${cnt?`<span class="cnt">${cnt}</span>`:''}</summary><div class="in">${body}</div></details>`;
+
+function vCheck(){
+ let tot=0,all=0;
+ const bl=GROUPS.map(([k,c,ti,items])=>{
+  const n=items.filter((_,i)=>checks[k+i]).length;tot+=n;all+=items.length;
+  return det(k,c,t(ti),items.map(([l],i)=>`<label class="ck"><input type="checkbox" data-ck="${k+i}"${checks[k+i]?' checked':''}><span>${t(l)}</span></label>`).join(''),`${n}/${items.length}`);
+ }).join('');
+ const cnt=g=>GROUPS.find(x=>x[0]===g)[3].filter((_,i)=>checks[g+i]).length;
+ const night=cnt('sx'),day=cnt('dx'),sg=cnt('sg'),cm=cnt('cm'),rf=cnt('rf');
+ let msg=t(a('Tick what you find. This is a prompt for testing, not a diagnosis.','ติ๊กสิ่งที่พบ นี่เป็นตัวช่วยตัดสินใจส่งตรวจ ไม่ใช่การวินิจฉัย'));
+ let c='slate';
+ if(tot){
+  if(rf){c='orange';msg=t(a('Red flag present: arrange a sleep study promptly; in-lab PSG is preferred.','มีสัญญาณเตือน: ส่งตรวจการนอนหลับโดยเร็ว แนะนำ PSG ในห้องปฏิบัติการ'))}
+  else if((night>=2)&&(day>=1||sg>=2||cm>=1)){c='rose';msg=t(a('Typical symptoms with supporting features: high pre-test probability — complete STOP-Bang and arrange a sleep study.','อาการเข้าได้ร่วมกับปัจจัยสนับสนุน: โอกาสก่อนตรวจสูง — ทำ STOP-Bang และส่งตรวจการนอนหลับ'))}
+  else if(night+day+sg+cm>=3){c='amber';msg=t(a('Some features: complete STOP-Bang and Epworth to decide on testing.','มีบางข้อ: ทำ STOP-Bang และ Epworth เพื่อตัดสินใจส่งตรวจ'))}
+  else{c='emerald';msg=t(a('Few features: low suspicion unless symptoms evolve.','พบน้อยข้อ: ความสงสัยต่ำ ยกเว้นอาการเปลี่ยนแปลง'))}
+ }
+ return `<div class="card ${c}"><div class="res ${c}"><b>${tot}/${all}</b> ${t(a('items ticked','ข้อที่ติ๊ก'))}<small>${msg}</small></div><div style="margin-top:8px"><button class="btn" data-act="clear">${t(UI.reset)}</button></div></div>`+bl;
+}
+function vScore(){
+ const r=stopRisk();
+ const sb=STOPQ.map(([q],i)=>`<label class="ck"><input type="checkbox" data-st="${i}"${stop[i]?' checked':''}><span>${t(q)}</span></label>`).join('');
+ const e=essRes();
+ const eb=ESSQ.map((q,i)=>`<label style="display:block;margin:8px 0;font-weight:600">${i+1}. ${t(q)}<select data-ess="${i}"><option value="">—</option>${ESSOPT.map((o,v)=>`<option value="${v}"${ess[i]===v?' selected':''}>${t(o)}</option>`).join('')}</select></label>`).join('');
+ return det('stop','indigo','STOP-Bang',sb+`<div class="res ${r.c}"><b>${r.n}/8</b> — ${t(RISKTXT[r.k])}<small>${t(RISKACT[r.k])}</small></div><p class="note">${t(a('0–2 low · 3–4 intermediate · 5–8 high. Also high risk if ≥ 2 of the first four items plus male, BMI > 35 or neck > 40 cm.','0–2 ต่ำ · 3–4 ปานกลาง · 5–8 สูง และถือว่าสูงถ้า ≥ 2 ใน 4 ข้อแรก ร่วมกับเพศชาย BMI > 35 หรือรอบคอ > 40 ซม.'))}</p>`)
+ +det('ess','amber','Epworth Sleepiness Scale',`<p class="note">${t(a('How likely are you to doze off (not just feel tired) in these situations, recently?','ในช่วงนี้ มีโอกาสเผลอหลับ (ไม่ใช่แค่รู้สึกเหนื่อย) ในสถานการณ์ต่อไปนี้มากเพียงใด'))}</p>${eb}`+(e?`<div class="res ${e.c}"><b>${e.s}/24</b> — ${t(ESSTXT[e.k])}<small>${t(a('Above 10 suggests excessive daytime sleepiness; sleepiness may be absent in many OSA patients, so a low score does not exclude OSA.','เกิน 10 บ่งชี้ง่วงกลางวันผิดปกติ ผู้ป่วย OSA จำนวนมากไม่ง่วง คะแนนต่ำจึงไม่ตัด OSA'))}</small></div>`:`<div class="res slate">N/A <small>${t(a('Answer all 8 items.','ตอบให้ครบ 8 ข้อ'))}</small></div>`),e?e.s+'/24':'N/A')
+ +`<p class="note">${t(a('Neck cut-off 40 cm follows the original STOP-Bang; Asian cut-offs for BMI may be lower — judge clinically.','เกณฑ์รอบคอ 40 ซม. ตาม STOP-Bang ต้นฉบับ เกณฑ์ BMI ของเอเชียอาจต่ำกว่า — ใช้ดุลยพินิจ'))}</p>`;
+}
+function vPsg(){
+ const inp=PF.map(([k,l])=>`<div><label>${t(l)}<input type="number" step="any" inputmode="decimal" data-ps="${k}" value="${esc(psg[k]??'')}"></label></div>`).join('');
+ const sev=`<div class="tw"><table><tr><th>AHI /h</th><th>${t(a('Severity','ความรุนแรง'))}</th></tr><tr><td>&lt; 5</td><td>${t(a('Normal','ปกติ'))}</td></tr><tr><td>5 – &lt; 15</td><td>${t(a('Mild','เล็กน้อย'))}</td></tr><tr><td>15 – &lt; 30</td><td>${t(a('Moderate','ปานกลาง'))}</td></tr><tr><td>≥ 30</td><td>${t(a('Severe','รุนแรง'))}</td></tr></table></div><p class="note">${t(a('AHI = (apnoeas + hypopnoeas) ÷ hours of sleep. Hypopnoea scoring (≥ 30 % flow drop with ≥ 3 % desaturation or arousal, vs ≥ 4 % desaturation) changes the AHI — note which rule the lab used.','AHI = (apnoea + hypopnoea) ÷ ชั่วโมงที่หลับ การนับ hypopnoea (ลมลด ≥ 30 % ร่วมกับ desaturation ≥ 3 % หรือ arousal เทียบกับ ≥ 4 %) ทำให้ AHI ต่างกัน — ดูว่าห้องตรวจใช้เกณฑ์ใด'))}</p>`;
+ const sel=`<ul><li><b>${t(a('Home sleep apnoea test:','Home sleep apnoea test:'))}</b> ${t(a('uncomplicated adults with a high pre-test probability of moderate–severe OSA. A negative or technically poor test needs in-lab PSG.','ผู้ใหญ่ไม่มีโรคร่วมซับซ้อน โอกาสก่อนตรวจสูงของ OSA ปานกลาง–รุนแรง ถ้าผลลบหรือคุณภาพไม่ดี ต้อง PSG'))}</li><li><b>${t(a('In-lab PSG:','PSG ในห้องปฏิบัติการ:'))}</b> ${t(a('significant cardiopulmonary or neuromuscular disease, hypoventilation, opioids, suspected central apnoea, insomnia or parasomnia, prior negative home test.','โรคหัวใจ-ปอด/กล้ามเนื้อ-ประสาทรุนแรง hypoventilation ใช้ opioid สงสัย central apnoea นอนไม่หลับ/parasomnia หรือ home test เคยเป็นลบ'))}</li></ul>`;
+ const read=`<ul><li>${t(a('Sleep efficiency, REM and N3 share, arousal index.','ประสิทธิภาพการนอน สัดส่วน REM และ N3 arousal index'))}</li><li>${t(a('AHI overall, REM vs NREM, supine vs non-supine.','AHI รวม REM เทียบ NREM ท่านอนหงายเทียบท่าอื่น'))}</li><li>${t(a('Obstructive vs central vs mixed events.','obstructive / central / mixed'))}</li><li>${t(a('SpO₂ nadir, T90, oxygen desaturation index.','SpO₂ ต่ำสุด T90 ODI'))}</li><li>${t(a('Heart-rhythm findings, limb movements, snoring.','จังหวะหัวใจ การเคลื่อนไหวขา การกรน'))}</li></ul>`;
+ return det('psgin','sky',t(a('Enter the study results','ใส่ผลการตรวจ')),`<div class="grid">${inp}</div><div id="psgout">${psgOut()}</div>`,'')
+ +det('psgsev','violet',t(a('AHI severity','ระดับความรุนแรงตาม AHI')),sev)
+ +det('psgsel','emerald',t(a('Which test?','เลือกตรวจแบบใด')),sel)
+ +det('psgread','slate',t(a('What to read in a report','อ่านอะไรในรายงาน')),read);
+}
+function vTx(){
+ return TX.map(([c,ti,items],i)=>det('tx'+i,c,t(ti),'<ul>'+items.map(x=>`<li>${t(x)}</li>`).join('')+'</ul>','')).join('');
+}
+function vSrc(){
+ return `<div class="card"><p><b>${t(a('Based on commonly cited criteria:','อ้างอิงเกณฑ์ที่ใช้กันทั่วไป:'))}</b></p><ul><li>AASM Clinical Practice Guideline — diagnostic testing for adult OSA (2017)</li><li>AASM Manual for the Scoring of Sleep and Associated Events (AHI definitions)</li><li>AASM Clinical Practice Guideline — PAP treatment of OSA (2019)</li><li>AASM / AADSM guideline — oral appliance therapy (2015)</li><li>STOP-Bang: Chung F et al., Anesthesiology 2008; Epworth Sleepiness Scale: Johns MW, Sleep 1991</li><li>US FDA — tirzepatide label for OSA (Dec 2024)</li></ul><p class="note">${t(a('Not re-verified line by line against the original documents in this app, and no Thai national OSA guideline is included. Check the current guideline and local availability before acting. N/A is shown wherever data are missing.','แอปนี้ยังไม่ได้ตรวจเทียบทีละบรรทัดกับเอกสารต้นฉบับ และไม่ได้รวมแนวทางเวชปฏิบัติ OSA ของไทย โปรดตรวจแนวทางล่าสุดและความพร้อมใช้ในประเทศก่อนใช้ ข้อมูลที่ไม่มีแสดงเป็น N/A'))}</p></div>`;
+}
+const VIEW={check:vCheck,score:vScore,psg:vPsg,tx:vTx,src:vSrc};
+
+function render(){
+ const y=window.scrollY;
+ const dark=document.documentElement.classList.contains('dark');
+ document.getElementById('app').innerHTML=
+ `<header><div><h1>${t(UI.title)}</h1><div class="sub">${t(UI.sub)}</div><div class="sub">${t(UI.by)}</div></div>
+ <div class="hb"><button class="pill" data-act="log" aria-label="Changelog" title="Changelog">v${VERSION}</button><button class="pill" data-act="lang">${lang==='en'?'TH':'EN'}</button><button class="pill round" data-act="theme" aria-label="Theme" title="Theme">${dark?'☀️':'🌙'}</button></div></header>
+ <nav>${UI.tabs.map(([k,l])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${t(l)}</button>`).join('')}</nav>
+ ${VIEW[tab]()}
+ ${modal?`<div class="modal" data-act="close"><div>${CHANGELOG.map(([v,d,ls])=>`<h3 style="margin:0">v${v} · ${d}</h3><ul>${ls.map(x=>`<li>${t(x)}</li>`).join('')}</ul>`).join('')}<button class="btn" data-act="close">OK</button></div></div>`:''}`;
+ window.scrollTo(0,y);
+}
+document.addEventListener('toggle',e=>{const k=e.target.dataset&&e.target.dataset.k;if(k){e.target.open?openSet.add(k):openSet.delete(k)}},true);
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-act],[data-tab]');if(!el)return;
+ if(el.dataset.tab){tab=el.dataset.tab;render();window.scrollTo(0,0);return}
+ const ac=el.dataset.act;
+ if(ac==='close'&&e.target!==el&&el.classList.contains('modal'))return;
+ if(ac==='lang'){lang=lang==='en'?'th':'en';save()}
+ else if(ac==='theme'){const d=document.documentElement.classList.toggle('dark');try{localStorage.setItem('osa-theme',d?'dark':'light')}catch(x){}}
+ else if(ac==='log')modal=1;
+ else if(ac==='close')modal=null;
+ else if(ac==='clear'){checks={};save()}
+ render();
+});
+document.addEventListener('change',e=>{
+ const d=e.target.dataset;
+ if(d.ck!==undefined){if(e.target.checked)checks[d.ck]=1;else delete checks[d.ck];save();render()}
+ else if(d.st!==undefined){stop[d.st]=e.target.checked;render()}
+ else if(d.ess!==undefined){ess[d.ess]=e.target.value===''?null:+e.target.value;render()}
+});
+document.addEventListener('input',e=>{
+ const k=e.target.dataset.ps;if(!k)return;
+ psg[k]=e.target.value;document.getElementById('psgout').innerHTML=psgOut();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal){modal=null;render()}});
+render();
+</script>
+</body>
+</html>
