@@ -18,6 +18,8 @@ body{color:var(--tx);font:14px/1.45 'IBM Plex Sans','IBM Plex Sans Thai',-apple-
 .indigo{--c:#4338ca;--cb:#eef2ff;--cd:#c7d2fe}.amber{--c:#b45309;--cb:#fffbeb;--cd:#fde68a}.emerald{--c:#047857;--cb:#ecfdf5;--cd:#a7f3d0}.rose{--c:#be123c;--cb:#fff1f2;--cd:#fecdd3}.orange{--c:#c2410c;--cb:#fff7ed;--cd:#fed7aa}.sky{--c:#0369a1;--cb:#f0f9ff;--cd:#bae6fd}.violet{--c:#6d28d9;--cb:#f5f3ff;--cd:#ddd6fe}.teal{--c:#0f766e;--cb:#f0fdfa;--cd:#99f6e4}.slate{--c:#334155;--cb:#f8fafc;--cd:#e2e8f0}
 html.dark .indigo{--c:#a5b4fc;--cb:rgba(99,102,241,.12);--cd:rgba(99,102,241,.35)}html.dark .amber{--c:#fcd34d;--cb:rgba(245,158,11,.12);--cd:rgba(245,158,11,.35)}html.dark .emerald{--c:#6ee7b7;--cb:rgba(16,185,129,.12);--cd:rgba(16,185,129,.35)}html.dark .rose{--c:#fda4af;--cb:rgba(244,63,94,.12);--cd:rgba(244,63,94,.35)}html.dark .orange{--c:#fdba74;--cb:rgba(249,115,22,.12);--cd:rgba(249,115,22,.35)}html.dark .sky{--c:#7dd3fc;--cb:rgba(14,165,233,.12);--cd:rgba(14,165,233,.35)}html.dark .violet{--c:#c4b5fd;--cb:rgba(139,92,246,.12);--cd:rgba(139,92,246,.35)}html.dark .teal{--c:#5eead4;--cb:rgba(20,184,166,.12);--cd:rgba(20,184,166,.35)}html.dark .slate{--c:#cbd5e1;--cb:rgba(100,116,139,.12);--cd:rgba(100,116,139,.35)}
 header{padding:4px 0 10px;position:relative}
+.ts{display:none}@media(max-width:480px){.tl{display:none}.ts{display:inline}}
+.res.row b{font-size:inherit}
 .top{position:absolute;top:0;right:0;display:flex;gap:6px;align-items:center;height:32px}
 h1{margin:0 0 6px;min-height:32px;padding-right:196px;display:flex;align-items:center;font-size:22px;font-weight:800;line-height:1.2;color:var(--tx)}
 @media(min-width:640px){h1{font-size:26px}}
@@ -68,6 +70,9 @@ label.ck input.sw{appearance:none;-webkit-appearance:none;width:40px;height:22px
 label.ck input.sw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #0004;transition:transform .15s}
 label.ck input.sw:checked{background:#4f46e5}
 label.ck input.sw:checked::after{transform:translateX(18px)}
+.strip{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0 2px}.strip .chip{font-size:11px;padding:2px 7px;margin:0}
+.sumbox{max-width:560px;width:100%}.sumpre{white-space:pre-wrap;word-break:break-word;font:12px/1.5 ui-monospace,Consolas,monospace;background:var(--inset);border:1px solid var(--bd);border-radius:10px;padding:10px;margin:0 0 8px;max-height:55vh;overflow:auto}
+@media print{.wrap>*:not(.sumwrap),.noprint{display:none!important}.modal.sumwrap{position:static;background:none;backdrop-filter:none;padding:0;display:block}.sumbox{max-width:none}.sumpre{max-height:none;overflow:visible;border:0;background:none;color:#000}body{background:#fff}}
 .lst{list-style:none;margin:0;padding:0}.lst li{margin:0;padding:8px 0;border-top:1px solid var(--bd);line-height:1.55;font-size:13.5px}.lst li:first-child{border-top:0}.lst b{color:var(--tx)}
 .lst li.cl{margin:6px 0;padding:8px 10px;border:1px solid var(--cd);background:var(--cb);border-radius:8px}.lst li.cl b{color:var(--c)}
 .sg{display:flex;align-items:center;gap:6px;margin:14px 0 2px;font:800 11px/1.2 inherit;font-family:inherit;color:var(--c);letter-spacing:.02em}.sg:first-child{margin-top:8px}
@@ -93,12 +98,13 @@ const DONATE={qr:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAQDAwQ
  th:{btn:'สนับสนุน',title:'สนับสนุนคู่มือนี้',close:'ปิด',alt:'QR พร้อมเพย์สำหรับสนับสนุนผู้พัฒนา',intro:'คู่มือนี้ใช้ได้ฟรี หากเป็นประโยชน์ต่อการทำงาน สามารถสนับสนุนการพัฒนาได้โดยสแกน QR พร้อมเพย์นี้ด้วยแอปธนาคาร',scan:'สแกนด้วยแอปธนาคารของไทย (พร้อมเพย์ / Thai QR Payment)',note:'การสนับสนุนเป็นความสมัครใจ และไม่มีผลต่อเนื้อหาของคู่มือ'}};
 const HEART='<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>';
 let donateOpen=false;
-let fromCheck=null,sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin']),modal=null;
+let summaryOpen=false,pap={},fromCheck=null,sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin']),modal=null;
 try{lang=localStorage.getItem('osa-lang')||'en';checks=JSON.parse(localStorage.getItem('osa-checks')||'{}')}catch(e){}
 const t=o=>o[lang]||o.en;
 const save=()=>{try{localStorage.setItem('osa-checks',JSON.stringify(checks));localStorage.setItem('osa-lang',lang)}catch(e){}};
 
 const UI={
+short:a('OSA Guide','คู่มือ OSA'),
 title:a('OSA Guide','คู่มือโรคหยุดหายใจขณะหลับ (OSA)'),
 sub:a('Obstructive sleep apnoea — checklist, screening, polysomnogram, treatment','Obstructive sleep apnoea — เช็กลิสต์ การคัดกรอง ผลตรวจการนอนหลับ การรักษา'),
 disc:a('Decision support only, not a substitute for clinical judgement','เป็นเครื่องมือช่วยตัดสินใจเท่านั้น ไม่ทดแทนดุลยพินิจทางคลินิก'),
@@ -386,7 +392,7 @@ const TX=[
 TX[0][2].push(G("Endotypes (PALM): collapsible airway (PAP, oral appliance, surgery); low arousal threshold (a sleep-promoting drug may be considered if SpO₂ is not low); high loop gain (some drugs or added oxygen); weak airway-muscle response (myofunctional therapy, upper-airway stimulation).","Endotype (PALM): ทางเดินหายใจยุบง่าย (PAP อุปกรณ์ในช่องปาก ผ่าตัด); arousal threshold ต่ำ (อาจพิจารณายาช่วยหลับถ้า SpO₂ ไม่ต่ำ); loop gain สูง (ยาบางชนิดหรือให้ออกซิเจนเสริม); กล้ามเนื้อตอบสนองน้อย (ฝึกกล้ามเนื้อ กระตุ้นทางเดินหายใจส่วนบน)"),
  G("Patient profile: women, younger patients and low BMI may do well with an oral appliance or minimally invasive procedures; middle-aged men with high BMI may benefit more from PAP.","ลักษณะผู้ป่วย: เพศหญิง อายุน้อย BMI ต่ำ อาจได้ประโยชน์จากอุปกรณ์ในช่องปากหรือหัตถการรุกล้ำน้อย ส่วนชายวัยกลางคนที่ BMI สูงอาจได้ประโยชน์จาก PAP มากกว่า"),
  G("Baveno classification (used mainly in Europe): sorts patients into four groups by sleepiness and significant comorbidity, to plan treatment. Significant comorbidities named: heart failure, coronary disease, arrhythmia, refractory hypertension, pulmonary hypertension, COPD, refractory asthma, stroke, kidney failure, diabetes, depression, muscular dystrophy, drug addiction.","Baveno classification (นิยมในยุโรป): แบ่งผู้ป่วยเป็น 4 กลุ่มตามความง่วงและโรคร่วมสำคัญ เพื่อวางแผนการรักษา โรคร่วมสำคัญที่ระบุ: หัวใจล้มเหลว โรคหลอดเลือดหัวใจ หัวใจเต้นผิดจังหวะ ความดันสูงที่ดื้อต่อการรักษา ความดันปอดสูง COPD หืดที่คุมไม่ได้ หลอดเลือดสมอง ไตวาย เบาหวาน ซึมเศร้า โรคกล้ามเนื้อลีบ การติดยาเสพติด"));
-const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)'),a('Berlin Questionnaire (3 categories, 9 scored items).','เพิ่มแบบสอบถาม Berlin (3 หมวด 9 ข้อที่นับคะแนน)'),a('Thai guideline read in full: added its low/high-risk definition with the "treat as high risk" list, more checklist risk factors, endotypes, Baveno classification, inconclusive-study causes, wearables note, Thai prevalence.','อ่านแนวทางไทยครบทั้งฉบับ: เพิ่มนิยามความเสี่ยงต่ำ/สูงพร้อมรายการที่ถือเป็นกลุ่มเสี่ยงสูง ปัจจัยเสี่ยงในเช็กลิสต์เพิ่มเติม endotype การจัดกลุ่ม Baveno สาเหตุของผลตรวจสรุปไม่ได้ หมายเหตุอุปกรณ์สวมใส่ และความชุกในไทย'),a('Complications of OSA block (cardiovascular, metabolic, safety, mood, respiratory, perioperative, pregnancy, effect of treatment) in the Checklist tab.','เพิ่มกรอบภาวะแทรกซ้อนของ OSA (หัวใจหลอดเลือด เมแทบอลิก ความปลอดภัย อารมณ์ ระบบหายใจ ช่วงผ่าตัด ตั้งครรภ์ ผลของการรักษา) ในแท็บเช็กลิสต์'),a('Donate button (heart, with PromptPay QR pop-up) in the header.','เพิ่มปุ่มสนับสนุน (รูปหัวใจ พร้อม QR พร้อมเพย์) ที่ส่วนหัว'),a('Checklist is a prompt only (no risk level) and has a "Use in scores" button that copies matching ticks into STOP-Bang and Berlin.','เช็กลิสต์เป็นเพียงตัวช่วยเตือน (ไม่แสดงระดับความเสี่ยง) และมีปุ่ม "ใช้ในคะแนน" คัดลอกข้อที่ตรงไปยัง STOP-Bang และ Berlin'),a('AASM guideline recommendations (diagnosis 2017, PAP 2019, oral appliance 2015, surgical referral 2021) added with strength ratings and AASM marks.','เพิ่มคำแนะนำจากแนวทาง AASM (การวินิจฉัย 2017, PAP 2019, อุปกรณ์ในช่องปาก 2015, การส่งต่อผ่าตัด 2021) พร้อมระดับน้ำหนักและเครื่องหมาย AASM'),a('Added the 2025 Thai adult snoring/OSA guideline (Thai Snoring and Sleep Apnea Society, RCOT), merged into the existing tabs (screening notes, test choice and definitions, treatment blocks, follow-up) with TH marks, including surgery, upper-airway investigations, myofunctional therapy and other devices.','เพิ่มแนวทางไทยสำหรับผู้ใหญ่ พ.ศ. 2568 (สมาคมโรคนอนกรนและหยุดหายใจขณะหลับ ราชวิทยาลัย โสต ศอ นาสิกแพทย์ฯ) โดยรวมเข้ากับแท็บเดิม (หมายเหตุการคัดกรอง การเลือกตรวจและนิยาม กรอบการรักษา การติดตาม) พร้อมเครื่องหมาย TH รวมถึงการผ่าตัด การตรวจทางเดินหายใจส่วนบน การฝึกกล้ามเนื้อ และอุปกรณ์อื่น'),a('Look matched to the Bronchodilator Guide (Bedside UI): slate and indigo palette, tinted guide tiles, round theme button.','ปรับหน้าตาให้ตรงกับ Bronchodilator Guide (Bedside UI): โทนสี slate และ indigo ปุ่มนำทางสีอ่อน ปุ่มธีมกลม')]]];
+const CHANGELOG=[[ '1.0.0',DATE,[a('First release: symptom/sign checklist, STOP-Bang and Epworth scores, polysomnogram interpreter, treatment ladder.','เปิดตัวครั้งแรก: เช็กลิสต์อาการ/อาการแสดง คะแนน STOP-Bang และ Epworth ตัวช่วยอ่านผล PSG ลำดับการรักษา'),a('Modified STOP-Bang toggle (Thai: BMI > 30, high risk ≥ 3).','เพิ่มสวิตช์ STOP-Bang แบบปรับปรุง (ไทย: BMI > 30, ความเสี่ยงสูง ≥ 3)'),a('Berlin Questionnaire (3 categories, 9 scored items).','เพิ่มแบบสอบถาม Berlin (3 หมวด 9 ข้อที่นับคะแนน)'),a('Thai guideline read in full: added its low/high-risk definition with the "treat as high risk" list, more checklist risk factors, endotypes, Baveno classification, inconclusive-study causes, wearables note, Thai prevalence.','อ่านแนวทางไทยครบทั้งฉบับ: เพิ่มนิยามความเสี่ยงต่ำ/สูงพร้อมรายการที่ถือเป็นกลุ่มเสี่ยงสูง ปัจจัยเสี่ยงในเช็กลิสต์เพิ่มเติม endotype การจัดกลุ่ม Baveno สาเหตุของผลตรวจสรุปไม่ได้ หมายเหตุอุปกรณ์สวมใส่ และความชุกในไทย'),a('Complications of OSA block (cardiovascular, metabolic, safety, mood, respiratory, perioperative, pregnancy, effect of treatment) in the Checklist tab.','เพิ่มกรอบภาวะแทรกซ้อนของ OSA (หัวใจหลอดเลือด เมแทบอลิก ความปลอดภัย อารมณ์ ระบบหายใจ ช่วงผ่าตัด ตั้งครรภ์ ผลของการรักษา) ในแท็บเช็กลิสต์'),a('Results strip with a Summary button (copy or print a chart note) and a PAP follow-up check in the Treatment tab.','แถบผลคะแนนพร้อมปุ่มสรุป (คัดลอกหรือพิมพ์เป็นบันทึก) และตัวตรวจติดตามการใช้ PAP ในแท็บการรักษา'),a('Donate button (heart, with PromptPay QR pop-up) in the header.','เพิ่มปุ่มสนับสนุน (รูปหัวใจ พร้อม QR พร้อมเพย์) ที่ส่วนหัว'),a('Checklist is a prompt only (no risk level) and has a "Use in scores" button that copies matching ticks into STOP-Bang and Berlin.','เช็กลิสต์เป็นเพียงตัวช่วยเตือน (ไม่แสดงระดับความเสี่ยง) และมีปุ่ม "ใช้ในคะแนน" คัดลอกข้อที่ตรงไปยัง STOP-Bang และ Berlin'),a('AASM guideline recommendations (diagnosis 2017, PAP 2019, oral appliance 2015, surgical referral 2021) added with strength ratings and AASM marks.','เพิ่มคำแนะนำจากแนวทาง AASM (การวินิจฉัย 2017, PAP 2019, อุปกรณ์ในช่องปาก 2015, การส่งต่อผ่าตัด 2021) พร้อมระดับน้ำหนักและเครื่องหมาย AASM'),a('Added the 2025 Thai adult snoring/OSA guideline (Thai Snoring and Sleep Apnea Society, RCOT), merged into the existing tabs (screening notes, test choice and definitions, treatment blocks, follow-up) with TH marks, including surgery, upper-airway investigations, myofunctional therapy and other devices.','เพิ่มแนวทางไทยสำหรับผู้ใหญ่ พ.ศ. 2568 (สมาคมโรคนอนกรนและหยุดหายใจขณะหลับ ราชวิทยาลัย โสต ศอ นาสิกแพทย์ฯ) โดยรวมเข้ากับแท็บเดิม (หมายเหตุการคัดกรอง การเลือกตรวจและนิยาม กรอบการรักษา การติดตาม) พร้อมเครื่องหมาย TH รวมถึงการผ่าตัด การตรวจทางเดินหายใจส่วนบน การฝึกกล้ามเนื้อ และอุปกรณ์อื่น'),a('Look matched to the Bronchodilator Guide (Bedside UI): slate and indigo palette, tinted guide tiles, round theme button.','ปรับหน้าตาให้ตรงกับ Bronchodilator Guide (Bedside UI): โทนสี slate และ indigo ปุ่มนำทางสีอ่อน ปุ่มธีมกลม')]]];
 
 /* ---------- render ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -420,6 +426,81 @@ function donateModal(){
  const d=DONATE[lang],ic=p=>'<svg viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round">'+p+'</svg>';
  return '<div class="modal" data-act="dclose" data-donate-modal><div role="dialog" aria-modal="true" aria-label="'+d.title+'" style="max-width:384px;text-align:center"><h2 style="margin:0 0 8px;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px"><span style="color:#f43f5e;display:inline-flex">'+ic(HEART)+'</span>'+d.title+'</h2><p class="note" style="font-size:12px;line-height:1.6;color:var(--tx)">'+d.intro+'</p><div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:6px;margin:10px auto;max-width:100%;display:inline-block"><img src="'+DONATE.qr+'" alt="'+d.alt+'" data-donate-qr style="display:block;max-width:100%;max-height:52vh;width:auto;border-radius:8px"></div><p style="margin:0 0 4px;font-size:11px;font-weight:600">'+d.scan+'</p><p class="note">'+d.note+'</p><div style="margin-top:12px"><button class="btn" data-act="dclose" style="background:var(--ac);color:#fff;border-color:var(--ac);padding:8px 18px">'+d.close+'</button></div></div></div>';
 }
+
+/* ---------- results strip, summary, PAP follow-up check ---------- */
+const STOPN=[a("Snoring","กรน"),a("Tired","เหนื่อย/ง่วง"),a("Observed apnoea","มีคนเห็นหยุดหายใจ"),a("Pressure","ความดันสูง"),a("BMI","BMI"),a("Age > 50","อายุ > 50"),a("Neck > 40 cm","รอบคอ > 40"),a("Male","เพศชาย")];
+const SEVN=[a("Normal","ปกติ"),a("Mild","เล็กน้อย"),a("Moderate","ปานกลาง"),a("Severe","รุนแรง")];
+function psgNums(){
+ const g=k=>num(psg[k]);const tst=g('tst'),oa=g('oa'),ca=g('ca'),hy=g('hy');
+ const o={tst,nad:g('nad'),t90:g('t90'),sup:g('sup'),non:g('non'),ahi:null};
+ if(tst&&tst>0&&oa!==null&&ca!==null&&hy!==null){o.ahi=(oa+ca+hy)/tst;o.sev=o.ahi<5?0:o.ahi<15?1:o.ahi<30?2:3;o.cen=(oa+ca+hy)?ca/(oa+ca+hy)*100:0}
+ return o;
+}
+const SEVC=['emerald','amber','orange','rose'];
+function strip(){
+ const chips=[];const anyStop=Object.values(stop).some(Boolean);
+ if(anyStop){const r=stopRisk();chips.push([r.c,'STOP-Bang '+r.n+'/8'])}
+ const e=essRes();if(e)chips.push([e.c,'ESS '+e.s+'/24']);
+ const b=berRes();if(b.done)chips.push([b.n>=2?'rose':'emerald','Berlin '+b.n+'/3']);
+ const p=psgNums();if(p.ahi!==null)chips.push([SEVC[p.sev],'AHI '+p.ahi.toFixed(1)]);
+ const tot=Object.keys(checks).length;if(tot)chips.push(['slate',tot+'/'+GROUPS.reduce((n,g)=>n+g[3].length,0)+' '+t(a("ticked","ติ๊ก"))]);
+ return '<div class="strip">'+(chips.length?chips.map(([c,x])=>'<span class="chip '+c+'">'+x+'</span>').join(''):'<span class="note">'+t(a("No scores yet","ยังไม่มีคะแนน"))+'</span>')+'<button class="btn" data-act="summary" style="margin-left:auto;color:var(--ac);border-color:var(--ac)">'+t(a("Summary","สรุป"))+'</button></div>';
+}
+function buildSummary(){
+ const L=[],NA='N/A';
+ L.push(t(a("OSA summary (decision support only)","สรุป OSA (ช่วยตัดสินใจเท่านั้น)"))+' — '+new Date().toISOString().slice(0,10));
+ const tot=Object.keys(checks).length;
+ if(tot){L.push('');L.push(t(a("Checklist","เช็กลิสต์"))+': '+tot+'/'+GROUPS.reduce((n,g)=>n+g[3].length,0));
+  GROUPS.forEach(([k,c,ti,items])=>{const on=items.filter((_,i)=>checks[k+i]).map(([l])=>t(l));if(on.length)L.push('  '+t(ti)+': '+on.join('; '))})}
+ L.push('');
+ const r=stopRisk(),anyStop=Object.values(stop).some(Boolean);
+ L.push('STOP-Bang'+(sbMod?' ('+t(a("modified, Thai","แบบปรับปรุง ไทย"))+')':'')+': '+(anyStop?r.n+'/8 — '+t(RISKTXT[r.k])+' ['+STOPN.filter((_,i)=>stop[i]).map(x=>t(x)).join(', ')+']':NA));
+ const e=essRes();L.push('Epworth: '+(e?e.s+'/24 — '+t(ESSTXT[e.k]):NA));
+ const b=berRes();L.push('Berlin: '+(b.done?b.n+'/3 '+t(a("categories positive","หมวดเป็นบวก"))+' — '+(b.n>=2?t(a("high risk","เสี่ยงสูง")):t(a("low risk","เสี่ยงต่ำ"))):NA));
+ const p=psgNums();
+ if(p.ahi!==null){const f=v=>v===null?NA:v;
+  L.push('PSG/sleep test: AHI '+p.ahi.toFixed(1)+'/h — '+t(SEVN[p.sev])+'; TST '+p.tst+' h; '+t(a("central share","สัดส่วน central"))+' '+p.cen.toFixed(0)+' %; SpO2 '+t(a("nadir","ต่ำสุด"))+' '+f(p.nad)+' %; T90 '+f(p.t90)+' %; '+t(a("supine / non-supine AHI","AHI ท่านอนหงาย / ท่านอื่น"))+' '+f(p.sup)+' / '+f(p.non));
+ }else L.push('PSG/sleep test: '+NA);
+ if(Object.values(pap).some(v=>v!==''&&v!=null)){const f=k=>(pap[k]===''||pap[k]==null)?NA:pap[k];
+  L.push(t(a("PAP follow-up","ติดตาม PAP"))+': '+t(a("use","ชั่วโมงใช้"))+' '+f('use')+' h/'+t(a("night","คืน"))+'; '+f('pct')+' % '+t(a("nights ≥ 4 h","คืนที่ ≥ 4 ชม."))+'; '+t(a("residual AHI","AHI ที่เหลือ"))+' '+f('rah')+'; '+t(a("leak","ลมรั่ว"))+' '+({ok:t(a("acceptable","ยอมรับได้")),high:t(a("high","สูง"))}[pap.leak]||NA)+'; '+t(a("sleepiness","ความง่วง"))+' '+({none:t(a("none","ไม่มี")),persists:t(a("persists","ยังมี"))}[pap.sl]||NA));
+ }
+ return L.join('\n');
+}
+function summaryModal(){
+ const txt=buildSummary().replace(/&/g,'&amp;').replace(/</g,'&lt;');
+ return '<div class="modal sumwrap" data-act="sclose"><div class="sumbox" role="dialog" aria-modal="true" aria-label="'+t(a("Summary","สรุป"))+'"><h2 style="margin:0 0 8px;font-size:16px;font-weight:800">'+t(a("Summary for the chart","สรุปสำหรับบันทึกเวชระเบียน"))+'</h2><pre id="sumtext" class="sumpre">'+txt+'</pre><p class="note noprint">'+t(a("No patient name or ID is included. Copy it, or print this page from a browser (printing is not available in the Claude viewer).","ไม่มีชื่อหรือเลขประจำตัวผู้ป่วย คัดลอกหรือสั่งพิมพ์จากเบราว์เซอร์ (การพิมพ์ใช้ไม่ได้ในตัวดู Claude)"))+'</p><div class="noprint" style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" data-act="sprint">'+t(a("Print","พิมพ์"))+'</button><button class="btn" data-act="scopy" style="background:var(--ac);color:#fff;border-color:var(--ac)">'+t(a("Copy","คัดลอก"))+'</button><button class="btn" data-act="sclose">'+t(a("Close","ปิด"))+'</button></div></div></div>';
+}
+function copySummary(btn){
+ const text=buildSummary();const done=()=>{const o=btn.textContent;btn.textContent=t(a("Copied","คัดลอกแล้ว"));setTimeout(()=>{btn.textContent=o},1500)};
+ const fallback=()=>{const pre=document.getElementById('sumtext');if(!pre)return;const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent=t(a("Selected: press Ctrl+C","เลือกแล้ว: กด Ctrl+C"))};
+ try{navigator.clipboard.writeText(text).then(done,fallback)}catch(e){fallback()}
+}
+/* PAP follow-up check: Thai guideline pp. 104-105, 116; AASM 2019 good-practice statement on follow-up data */
+function papOut(){
+ const g=k=>num(pap[k]);const u=g('use'),pc=g('pct'),ra=g('rah');
+ const row=(c,txt)=>'<div class="res row '+c+'" style="font-weight:500;font-size:13px;margin-top:8px">'+txt+'</div>';
+ let o='';
+ if(u===null||pc===null)o+=row('slate','<b>'+t(a("Use","การใช้"))+':</b> N/A — '+t(a("enter average hours and % of nights ≥ 4 h","ใส่ชั่วโมงเฉลี่ยและ % ของคืนที่ใช้ ≥ 4 ชม.")));
+ else if(u>=4&&pc>70)o+=row('emerald','<b>'+t(a("Use","การใช้"))+':</b> '+t(a("meets the Thai guideline target (≥ 4 h a night averaged over all days, on > 70 % of days). Encourage whole-night use, especially in severe OSA.","ถึงเป้าตามแนวทางไทย (เฉลี่ย ≥ 4 ชม./คืน นับทุกวัน และใช้ > 70 % ของวัน) แนะนำให้ใช้ทั้งคืน โดยเฉพาะ OSA รุนแรง")));
+ else o+=row('orange','<b>'+t(a("Use","การใช้"))+':</b> '+t(a("below target. Ask why; fix mask fit, pressure comfort, dry mouth or nose (heated humidifier, chin strap, nasal treatment), repeat education, and add behavioural or telemonitoring support.","ต่ำกว่าเป้า ถามสาเหตุ แก้หน้ากากไม่พอดี ความดันไม่สบาย ปาก/จมูกแห้ง (เครื่องทำความชื้น สายรัดคาง รักษาจมูก) ให้ความรู้ซ้ำ และเพิ่มการปรับพฤติกรรมหรือติดตามทางไกล")));
+ const leak=pap.leak;
+ if(leak==='high')o+=row('orange','<b>'+t(a("Leak","ลมรั่ว"))+':</b> '+t(a("high. Fix this first: mask size or type, headgear, mouth leak (full-face mask or chin strap).","สูง แก้ก่อน: ขนาด/ชนิดหน้ากาก สายรัดศีรษะ ลมรั่วทางปาก (หน้ากากคลุมปากและจมูก หรือสายรัดคาง)")));
+ else if(leak==='ok')o+=row('emerald','<b>'+t(a("Leak","ลมรั่ว"))+':</b> '+t(a("acceptable.","ยอมรับได้")));
+ else o+=row('slate','<b>'+t(a("Leak","ลมรั่ว"))+':</b> N/A');
+ if(ra===null)o+=row('slate','<b>'+t(a("Residual AHI","AHI ที่เหลือ"))+':</b> N/A');
+ else if(ra<5)o+=row('emerald','<b>'+t(a("Residual AHI","AHI ที่เหลือ"))+':</b> '+ra+' — '+t(a("at the usual target (< 5, the Thai guideline's \"optimal\" titration level).","ถึงเป้าปกติ (< 5 ซึ่งเป็นระดับ optimal ของการตั้งแรงดันตามแนวทางไทย)")));
+ else o+=row(leak==='high'?'orange':'amber','<b>'+t(a("Residual AHI","AHI ที่เหลือ"))+':</b> '+ra+' — '+(leak==='high'?t(a("above 5 with high leak: correct the leak and re-read the download.","สูงกว่า 5 และลมรั่วสูง: แก้ลมรั่วแล้วดูข้อมูลเครื่องซ้ำ")):t(a("above 5 without a leak problem: review the pressure (re-titrate or adjust the APAP range), look for central events (treatment-emergent central apnoea) and consider BPAP or a sleep-specialist review.","สูงกว่า 5 โดยไม่มีปัญหาลมรั่ว: ทบทวนแรงดัน (titrate ซ้ำหรือปรับช่วง APAP) ดูเหตุการณ์ central (treatment-emergent central apnoea) และพิจารณา BPAP หรือส่งผู้เชี่ยวชาญด้านการนอนหลับ"))));
+ const good=u!==null&&pc!==null&&u>=4&&pc>70&&ra!==null&&ra<5;
+ if(pap.sl==='persists')o+=row(good?'violet':'orange','<b>'+t(a("Sleepiness","ความง่วง"))+':</b> '+(good?t(a("still sleepy despite good use and a controlled AHI. Look for another cause first (too little time in bed, other sleep disorders, sedating drugs, depression, anaemia, thyroid); consider MSLT; wake-promoting drugs only after other causes are excluded.","ยังง่วงทั้งที่ใช้ดีและ AHI คุมได้ ให้หาสาเหตุอื่นก่อน (เวลานอนไม่พอ โรคการนอนอื่น ยาที่ทำให้ง่วง ซึมเศร้า ซีด ไทรอยด์) พิจารณา MSLT และใช้ยากระตุ้นเมื่อตัดสาเหตุอื่นแล้วเท่านั้น")):t(a("still sleepy, but use or AHI is not yet at target: treat this as under-treatment and fix those first.","ยังง่วง แต่การใช้หรือ AHI ยังไม่ถึงเป้า ถือว่ารักษาไม่เพียงพอ ให้แก้สองข้อนั้นก่อน"))));
+ else if(pap.sl==='none')o+=row('emerald','<b>'+t(a("Sleepiness","ความง่วง"))+':</b> '+t(a("no residual sleepiness.","ไม่มีความง่วงที่เหลือ")));
+ return o;
+}
+function papBlock(){
+ const f=(k,l,st)=>'<div><label>'+t(l)+'<input type="number" step="'+(st||'any')+'" inputmode="decimal" data-pp="'+k+'" value="'+esc(pap[k]??'')+'"></label></div>';
+ const sel=(k,l,opts)=>'<div><label>'+t(l)+'<select data-pps="'+k+'"><option value="">—</option>'+opts.map(([v,x])=>'<option value="'+v+'"'+(pap[k]===v?' selected':'')+'>'+t(x)+'</option>').join('')+'</select></label></div>';
+ return det('papchk','indigo',t(a("PAP follow-up check","ตรวจติดตามการใช้ PAP")),'<p class="note" style="margin:6px 0">'+t(a("Enter the machine download. Targets from the Thai guideline (pp. 104–105, 116); AASM asks for follow-up with objective efficacy and usage data.","ใส่ข้อมูลจากเครื่อง เป้าหมายตามแนวทางไทย (หน้า 104–105, 116) AASM แนะนำให้ติดตามโดยใช้ข้อมูลประสิทธิผลและการใช้งานเชิงวัตถุ"))+'</p><div class="grid">'+f('use',a("Average use (h/night, all days)","ใช้เฉลี่ย (ชม./คืน นับทุกวัน)"))+f('pct',a("Nights used ≥ 4 h (%)","คืนที่ใช้ ≥ 4 ชม. (%)"))+f('rah',a("Residual AHI","AHI ที่เหลือ"))+sel('leak',a("Leak","ลมรั่ว"),[['ok',a("Acceptable","ยอมรับได้")],['high',a("High","สูง")]])+sel('sl',a("Residual sleepiness","ความง่วงที่เหลือ"),[['none',a("None","ไม่มี")],['persists',a("Persists","ยังมี")]])+'</div><div id="papout">'+papOut()+'</div>','');
+}
+
 function vCheck(){
  let tot=0,all=0;
  const bl=GROUPS.map(([k,c,ti,items])=>{
@@ -474,7 +555,7 @@ function vPsg(){
  +det('psgread','slate',t(a('What to read in a report','อ่านอะไรในรายงาน')),read);
 }
 function vTx(){
- return TX.map(([c,ti,items,src],i)=>det('tx'+i,c,t(ti),lis(items)+(src?`<p class="note">${t(a('Thai guideline 2025 pages','หน้าแนวทางไทย 2568'))}: ${src}</p>`:''),'')).join('');
+ return papBlock()+TX.map(([c,ti,items,src],i)=>det('tx'+i,c,t(ti),lis(items)+(src?`<p class="note">${t(a('Thai guideline 2025 pages','หน้าแนวทางไทย 2568'))}: ${src}</p>`:''),'')).join('');
 }
 function vSrc(){
  return `<div class="card"><p><b>${t(a('Based on commonly cited criteria:','อ้างอิงเกณฑ์ที่ใช้กันทั่วไป:'))}</b></p><ul><li>AASM guideline, diagnostic testing for adult OSA: Kapur VK et al., J Clin Sleep Med 2017;13:479-504, <a href="https://doi.org/10.5664/jcsm.6506" target="_blank" rel="noopener">doi:10.5664/jcsm.6506</a></li><li>AASM Manual for the Scoring of Sleep and Associated Events (AHI definitions)</li><li>AASM guideline, PAP treatment of adult OSA: Patil SP et al., J Clin Sleep Med 2019;15:335-343, <a href="https://doi.org/10.5664/jcsm.7640" target="_blank" rel="noopener">doi:10.5664/jcsm.7640</a></li><li>AASM/AADSM guideline, oral appliance therapy: Ramar K et al., J Clin Sleep Med 2015;11:773-827, <a href="https://doi.org/10.5664/jcsm.4858" target="_blank" rel="noopener">doi:10.5664/jcsm.4858</a></li><li>AASM guideline, referral for surgical consultation: Kent D et al., J Clin Sleep Med 2021;17:2499-2505, <a href="https://doi.org/10.5664/jcsm.9592" target="_blank" rel="noopener">doi:10.5664/jcsm.9592</a></li><li>AASM guideline, evaluation, management and long-term care of OSA in adults: Epstein LJ et al., J Clin Sleep Med 2009;5:263-276</li><li>STOP-Bang: Chung F et al., Anesthesiology 2008; Epworth Sleepiness Scale: Johns MW, Sleep 1991</li><li>Thai guideline: แนวทางการพัฒนาการวินิจฉัยและรักษานอนกรนและโรคหยุดหายใจขณะหลับจากการอุดกั้นในประเทศไทย สำหรับผู้ใหญ่ พ.ศ. 2568 (Supiyaphan P, Sonsuwan N, et al.; 30 authors), Thai J Otolaryngol Head Neck Surg 2024;25(2):89- ; <a href="https://he02.tci-thaijo.org/index.php/rcotJ/article/view/274258" target="_blank" rel="noopener">he02.tci-thaijo.org</a></li><li>Berlin Questionnaire: Netzer NC et al., Ann Intern Med 1999;131:485-491</li><li>Modified STOP-Bang: Sangkum L et al., BMC Anesthesiol 2021;21:132, PMID 33906600, <a href="https://doi.org/10.1186/s12871-021-01347-0" target="_blank" rel="noopener">doi:10.1186/s12871-021-01347-0</a></li><li>US FDA — tirzepatide label for OSA (Dec 2024)</li></ul><p class="note">${t(a('Not re-verified line by line against the original documents in this app, and the Thai guideline is summarised in its own tab. Check the current guideline and local availability before acting. N/A is shown wherever data are missing.','แอปนี้ยังไม่ได้ตรวจเทียบทีละบรรทัดกับเอกสารต้นฉบับ และแนวทางไทยสรุปไว้ในแท็บของตัวเอง โปรดตรวจแนวทางล่าสุดและความพร้อมใช้ในประเทศก่อนใช้ ข้อมูลที่ไม่มีแสดงเป็น N/A'))}</p></div>`+`<div class="card"><p><b>${t(a('Thai guideline 2025: coverage and limits','แนวทางไทย 2568: ขอบเขตและข้อจำกัด'))}</b></p>`+lis(THAIABOUT)+`</div>`;
@@ -490,9 +571,11 @@ function render(){
  const TT=a('Switch theme','สลับธีม');
  document.getElementById('app').innerHTML=
  `<header><div class="top"><button class="pill" data-act="log" aria-label="Changelog" title="Changelog">v${VERSION}</button><button class="pill pill-donate" data-act="donate" data-donate-btn aria-haspopup="dialog" aria-label="${DONATE[lang].title}" title="${DONATE[lang].title}">${ic(HEART)}<span class="dn">${DONATE[lang].btn}</span></button><button class="pill" data-act="lang">${lang==='en'?'ไทย':'EN'}</button><button class="pill round" data-act="theme" aria-label="${t(TT)}" title="${t(TT)}">${dark?SUN:MOON}</button></div>
- <h1>${t(UI.title)}</h1><div class="sub">${t(UI.sub)}</div><div class="by">Made by Warodom Phaenthong, M.D.</div><div class="disc">${t(UI.disc)}</div></header>
+ <h1><span class="tl">${t(UI.title)}</span><span class="ts">${t(UI.short)}</span></h1><div class="sub">${t(UI.sub)}</div><div class="by">Made by Warodom Phaenthong, M.D.</div><div class="disc">${t(UI.disc)}</div></header>
  <nav>${UI.tabs.map(([k,l,c,p,s])=>`<button data-tab="${k}" class="tile ${c}${tab===k?' on':''}" title="${t(l)}" aria-label="${t(l)}">${ic(p)}<span>${narrow()?t(s):t(l)}</span></button>`).join('')}</nav>
+ ${strip()}
  ${VIEW[tab]()}
+ ${summaryOpen?summaryModal():''}
  ${donateOpen?donateModal():''}
  ${modal?`<div class="modal" data-act="close"><div>${CHANGELOG.map(([v,d,ls])=>`<h3 style="margin:0">v${v} · ${d}</h3><ul>${ls.map(x=>`<li>${t(x)}</li>`).join('')}</ul>`).join('')}<button class="btn" data-act="close">OK</button></div></div>`:''}`;
  window.scrollTo(0,y);
@@ -502,7 +585,11 @@ document.addEventListener('click',e=>{
  const el=e.target.closest('[data-act],[data-tab]');if(!el)return;
  if(el.dataset.tab){tab=el.dataset.tab;render();window.scrollTo(0,0);return}
  const ac=el.dataset.act;
- if((ac==='close'||ac==='dclose')&&e.target!==el&&el.classList.contains('modal'))return;
+ if((ac==='close'||ac==='dclose'||ac==='sclose')&&e.target!==el&&el.classList.contains('modal'))return;
+ if(ac==='summary'){summaryOpen=true;render();return}
+ if(ac==='sclose'){summaryOpen=false;render();return}
+ if(ac==='scopy'){copySummary(el);return}
+ if(ac==='sprint'){try{window.print()}catch(x){}return}
  if(ac==='donate'){donateOpen=true;render();return}
  if(ac==='dclose'){donateOpen=false;render();return}
  if(ac==='lang'){lang=lang==='en'?'th':'en';save()}
@@ -518,15 +605,17 @@ document.addEventListener('change',e=>{
  const d=e.target.dataset;
  if(d.ck!==undefined){if(e.target.checked)checks[d.ck]=1;else delete checks[d.ck];save();render()}
  else if(d.ber!==undefined){ber[d.ber]=e.target.value===''?null:+e.target.value;render()}
+ else if(d.pps!==undefined){pap[d.pps]=e.target.value;document.getElementById('papout').innerHTML=papOut()}
  else if(d.sbmod!==undefined){sbMod=e.target.checked;render()}
  else if(d.st!==undefined){stop[d.st]=e.target.checked;render()}
  else if(d.ess!==undefined){ess[d.ess]=e.target.value===''?null:+e.target.value;render()}
 });
 document.addEventListener('input',e=>{
+ const pk=e.target.dataset.pp;if(pk){pap[pk]=e.target.value;document.getElementById('papout').innerHTML=papOut();return}
  const k=e.target.dataset.ps;if(!k)return;
  psg[k]=e.target.value;document.getElementById('psgout').innerHTML=psgOut();
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(donateOpen){donateOpen=false;render()}else if(modal){modal=null;render()}}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(donateOpen){donateOpen=false;render()}else if(summaryOpen){summaryOpen=false;render()}else if(modal){modal=null;render()}}});
 addEventListener('resize',()=>{const n=narrow();if(n!==lastN){lastN=n;render()}});
 let lastN=narrow();
 try{const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap';document.head.appendChild(l)}catch(e){}
