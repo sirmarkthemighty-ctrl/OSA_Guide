@@ -164,7 +164,8 @@ const GROUPS=[
  [a('Irritability, low mood','หงุดหงิด ซึมเศร้า')],
  [a('Drowsy driving or near-miss','ง่วงขณะขับรถ หรือเกือบเกิดอุบัติเหตุ')],
  [a('Reduced libido / erectile dysfunction','ความต้องการทางเพศลดลง / หย่อนสมรรถภาพ')],
- [a("Breathlessness with no other cause","หอบเหนื่อยโดยไม่มีสาเหตุอื่น"),a("Exclude cardiac, lung, blood (anaemia) and thyroid causes first; OSA can cause it through pulmonary hypertension. (KKU 2025)","ตัดสาเหตุจากหัวใจ ปอด เลือด (ซีด) และไทรอยด์ก่อน OSA อาจทำให้หอบจากความดันปอดสูง (KKU 2025)")]]],
+ [a("Breathlessness with no other cause","หอบเหนื่อยโดยไม่มีสาเหตุอื่น"),a("Exclude cardiac, lung, blood (anaemia) and thyroid causes first; OSA can cause it through pulmonary hypertension. (KKU 2025)","ตัดสาเหตุจากหัวใจ ปอด เลือด (ซีด) และไทรอยด์ก่อน OSA อาจทำให้หอบจากความดันปอดสูง (KKU 2025)")],
+ [a("Dizziness or vertigo (BPPV)","เวียนศีรษะ หรือบ้านหมุน (BPPV)"),a("OSA is linked with peripheral vestibular disorders such as BPPV, so consider it in unexplained dizziness. (KKU 2025)","OSA สัมพันธ์กับโรคของระบบการทรงตัวส่วนปลาย เช่น BPPV จึงนึกถึงเมื่อเวียนศีรษะโดยไม่ทราบสาเหตุ (KKU 2025)")]]],
 ['sg','emerald',a('Signs on examination','อาการแสดงจากการตรวจ'),[
  [a('Obesity (BMI ≥ 25 Asian cut-off; ≥ 30 general)','อ้วน (BMI ≥ 25 เกณฑ์เอเชีย; ≥ 30 ทั่วไป)')],
  [a('Neck circumference > 40 cm','รอบคอ > 40 ซม.')],
@@ -445,7 +446,8 @@ const thaiDate=d=>{const m=/^(\w+) (\d+), (\d{4})$/.exec(d);return m&&TH_MONTHS[
 /* one entry per day, newest first; a new day gets a new version (see the Bronchodilator Guide) */
 const CHANGELOG=[
  {version:'1.1.0',date:'November 19, 2026',
-  features:[a("Checklist symptoms updated from the KKU lecture slide \"OSA symptoms\": snoring or stridor, pseudo-PND, breathlessness with no other cause, insomnia, headache pattern, daytime sleepiness and nocturia, each with a short note (for example 80 % of OSA patients snore, 30–50 % have insomnia).","อัปเดตอาการในเช็กลิสต์ตามสไลด์ KKU \"OSA symptoms\": กรนหรือ stridor, pseudo-PND, หอบเหนื่อยโดยไม่มีสาเหตุอื่น, นอนไม่หลับ, ลักษณะปวดศีรษะ, ง่วงตอนกลางวัน และปัสสาวะกลางคืน พร้อมหมายเหตุสั้นๆ (เช่น ผู้ป่วย OSA 80 % กรน 30–50 % นอนไม่หลับ)")],
+  features:[a("Checklist: dizziness or vertigo (BPPV) added to the daytime symptoms, from the same KKU lecture.","เช็กลิสต์: เพิ่มอาการเวียนศีรษะหรือบ้านหมุน (BPPV) ในอาการตอนกลางวัน จากการบรรยาย KKU เดียวกัน"),
+   a("Checklist symptoms updated from the KKU lecture slide \"OSA symptoms\": snoring or stridor, pseudo-PND, breathlessness with no other cause, insomnia, headache pattern, daytime sleepiness and nocturia, each with a short note (for example 80 % of OSA patients snore, 30–50 % have insomnia).","อัปเดตอาการในเช็กลิสต์ตามสไลด์ KKU \"OSA symptoms\": กรนหรือ stridor, pseudo-PND, หอบเหนื่อยโดยไม่มีสาเหตุอื่น, นอนไม่หลับ, ลักษณะปวดศีรษะ, ง่วงตอนกลางวัน และปัสสาวะกลางคืน พร้อมหมายเหตุสั้นๆ (เช่น ผู้ป่วย OSA 80 % กรน 30–50 % นอนไม่หลับ)")],
   bugs:[]},
  {version:'1.0.0',date:'November 16, 2026',
   features:[a("The two modified STOP-Bang switches are easier to read: a tag (In the Thai guideline / Exploratory), the cut-offs in bold, and one short line of evidence.","สวิตช์ STOP-Bang แบบปรับปรุงอ่านง่ายขึ้น: มีป้าย (อยู่ในแนวทางไทย / ยังเป็นการทดลองใช้) เกณฑ์ตัวหนา และหลักฐานสั้นหนึ่งบรรทัด"),
