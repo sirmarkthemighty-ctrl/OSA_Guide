@@ -129,7 +129,7 @@ const DONATE={qr:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAQDAwQ
  th:{btn:'สนับสนุน',title:'สนับสนุนคู่มือนี้',close:'ปิด',alt:'QR พร้อมเพย์สำหรับสนับสนุนผู้พัฒนา',intro:'คู่มือนี้ใช้ได้ฟรี หากเป็นประโยชน์ต่อการทำงาน สามารถสนับสนุนการพัฒนาได้โดยสแกน QR พร้อมเพย์นี้ด้วยแอปธนาคาร',scan:'สแกนด้วยแอปธนาคารของไทย (พร้อมเพย์ / Thai QR Payment)',note:'การสนับสนุนเป็นความสมัครใจ และไม่มีผลต่อเนื้อหาของคู่มือ'}};
 const HEART='<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>';
 let donateOpen=false;
-let handOpen=false,handLang='en',confirmNew=false,body={},summaryOpen=false,pap={},fromCheck=null,sbKku=false,sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin','map','src0','src1','src2','src3','src4']),modal=null;
+let handOpen=false,handLang='en',confirmNew=false,body={},summaryOpen=false,pap={},fromCheck=null,sbKku=false,sbMod=false,lang='en',tab='check',stop={},ess=Array(8).fill(null),checks={},psg={},openSet=new Set(['sx','stop','psgin','map','src0','src1','src2','src3','src4','src5']),modal=null;
 try{lang=localStorage.getItem('osa-lang')||'en';checks=JSON.parse(localStorage.getItem('osa-checks')||'{}')}catch(e){}
 const t=o=>o[lang]||o.en;
 const save=()=>{try{localStorage.setItem('osa-checks',JSON.stringify(checks));localStorage.setItem('osa-lang',lang)}catch(e){}};
@@ -146,22 +146,25 @@ reset:a('Clear all','ล้างทั้งหมด'),
 /* ---------- checklist data ---------- */
 const GROUPS=[
 ['sx','indigo',a('Night-time symptoms','อาการตอนกลางคืน'),[
- [a('Loud, habitual snoring','กรนดังเป็นประจำ')],
+ [a("Loud, habitual snoring or stridor","กรนดังเป็นประจำ หรือมีเสียงหายใจดัง (stridor)"),a("80 % of OSA patients snore. Older patients often do not: they come with insomnia and frequent waking instead. (KKU 2025)","ผู้ป่วย OSA ร้อยละ 80 กรน ผู้สูงอายุมักไม่กรน แต่มาด้วยนอนไม่หลับและตื่นบ่อย (KKU 2025)")],
  [a('Witnessed apnoeas (partner sees pauses in breathing)','มีคนเห็นหยุดหายใจขณะหลับ')],
  [a('Gasping / choking arousals','สะดุ้งตื่น หายใจเฮือก สำลัก')],
- [a('Nocturia ≥ 2 per night','ปัสสาวะกลางคืน ≥ 2 ครั้ง')],
+ [a("Nocturia ≥ 2 per night","ปัสสาวะกลางคืน ≥ 2 ครั้ง"),a("Not normal. Also ask about drinks before bed, alcohol, diuretics, calcium-channel blockers, uncontrolled diabetes, CKD and prostate enlargement. OSA raises ANP. (KKU 2025)","ไม่ใช่เรื่องปกติ ถามเรื่องดื่มน้ำก่อนนอน แอลกอฮอล์ ยาขับปัสสาวะ ยา CCB เบาหวานคุมไม่ดี โรคไตเรื้อรัง ต่อมลูกหมากโต OSA ทำให้ ANP สูง (KKU 2025)")],
  [a('Restless, fragmented sleep; night sweats','นอนไม่สนิท ตื่นบ่อย เหงื่อออกกลางคืน')],
  [a('Dry mouth / sore throat on waking','ปากคอแห้งตอนตื่น')],
- [a('Night-time reflux','กรดไหลย้อนตอนกลางคืน')]]],
+ [a('Night-time reflux','กรดไหลย้อนตอนกลางคืน')],
+ [a("Waking breathless like PND (pseudo-PND)","ตื่นกลางคืนหอบเหนื่อยคล้าย PND (pseudo-PND)"),a("OSA can mimic paroxysmal nocturnal dyspnoea. (KKU 2025)","OSA อาจเลียนแบบอาการ PND (KKU 2025)")],
+ [a("Insomnia (trouble falling or staying asleep)","นอนไม่หลับ (หลับยากหรือหลับไม่ต่อเนื่อง)"),a("Found in 30–50 % of OSA patients, and about 30 % of patients with insomnia had OSA. (KKU 2025)","พบใน 30–50 % ของผู้ป่วย OSA และประมาณ 30 % ของผู้ป่วยนอนไม่หลับเป็น OSA (KKU 2025)")]]],
 ['dx','amber',a('Daytime symptoms','อาการตอนกลางวัน'),[
- [a('Excessive daytime sleepiness','ง่วงนอนมากตอนกลางวัน')],
+ [a("Excessive daytime sleepiness","ง่วงนอนมากตอนกลางวัน"),a("Sleepiness has many causes, so build a differential. (KKU 2025)","ความง่วงมีหลายสาเหตุ ควรแยกโรคให้ครบ (KKU 2025)")],
  [a('Unrefreshing sleep','นอนแล้วไม่สดชื่น')],
- [a('Morning headache','ปวดศีรษะตอนเช้า')],
+ [a("Headache, often in the morning","ปวดศีรษะ มักตอนเช้า"),a("No fixed pattern. Morning headache is found in 18 % of OSA: typically both sides of the forehead, squeezing, daily, lasting hours. Tension-type headache is more likely in OSA. (KKU 2025)","ไม่มีรูปแบบแน่นอน ปวดศีรษะตอนเช้าพบ 18 % ของ OSA มักปวดหน้าผากสองข้าง แบบบีบรัด ทุกวัน นานหลายชั่วโมง พบ tension-type มากกว่าในผู้ป่วย OSA (KKU 2025)")],
  [a('Fatigue','อ่อนเพลีย')],
  [a('Poor concentration / memory','สมาธิ/ความจำลดลง')],
  [a('Irritability, low mood','หงุดหงิด ซึมเศร้า')],
  [a('Drowsy driving or near-miss','ง่วงขณะขับรถ หรือเกือบเกิดอุบัติเหตุ')],
- [a('Reduced libido / erectile dysfunction','ความต้องการทางเพศลดลง / หย่อนสมรรถภาพ')]]],
+ [a('Reduced libido / erectile dysfunction','ความต้องการทางเพศลดลง / หย่อนสมรรถภาพ')],
+ [a("Breathlessness with no other cause","หอบเหนื่อยโดยไม่มีสาเหตุอื่น"),a("Exclude cardiac, lung, blood (anaemia) and thyroid causes first; OSA can cause it through pulmonary hypertension. (KKU 2025)","ตัดสาเหตุจากหัวใจ ปอด เลือด (ซีด) และไทรอยด์ก่อน OSA อาจทำให้หอบจากความดันปอดสูง (KKU 2025)")]]],
 ['sg','emerald',a('Signs on examination','อาการแสดงจากการตรวจ'),[
  [a('Obesity (BMI ≥ 25 Asian cut-off; ≥ 30 general)','อ้วน (BMI ≥ 25 เกณฑ์เอเชีย; ≥ 30 ทั่วไป)')],
  [a('Neck circumference > 40 cm','รอบคอ > 40 ซม.')],
@@ -441,6 +444,9 @@ const TH_MONTHS={January:'มกราคม',February:'กุมภาพัน
 const thaiDate=d=>{const m=/^(\w+) (\d+), (\d{4})$/.exec(d);return m&&TH_MONTHS[m[1]]?m[2]+' '+TH_MONTHS[m[1]]+' '+(+m[3]+543):d};
 /* one entry per day, newest first; a new day gets a new version (see the Bronchodilator Guide) */
 const CHANGELOG=[
+ {version:'1.1.0',date:'November 19, 2026',
+  features:[a("Checklist symptoms updated from the KKU lecture slide \"OSA symptoms\": snoring or stridor, pseudo-PND, breathlessness with no other cause, insomnia, headache pattern, daytime sleepiness and nocturia, each with a short note (for example 80 % of OSA patients snore, 30–50 % have insomnia).","อัปเดตอาการในเช็กลิสต์ตามสไลด์ KKU \"OSA symptoms\": กรนหรือ stridor, pseudo-PND, หอบเหนื่อยโดยไม่มีสาเหตุอื่น, นอนไม่หลับ, ลักษณะปวดศีรษะ, ง่วงตอนกลางวัน และปัสสาวะกลางคืน พร้อมหมายเหตุสั้นๆ (เช่น ผู้ป่วย OSA 80 % กรน 30–50 % นอนไม่หลับ)")],
+  bugs:[]},
  {version:'1.0.0',date:'November 16, 2026',
   features:[a("The two modified STOP-Bang switches are easier to read: a tag (In the Thai guideline / Exploratory), the cut-offs in bold, and one short line of evidence.","สวิตช์ STOP-Bang แบบปรับปรุงอ่านง่ายขึ้น: มีป้าย (อยู่ในแนวทางไทย / ยังเป็นการทดลองใช้) เกณฑ์ตัวหนา และหลักฐานสั้นหนึ่งบรรทัด"),
    a("Thai modified STOP-Bang now cites the Thai guideline reference (Banhiran 2014, BMI > 30) and the Khon Kaen version is marked exploratory.","STOP-Bang แบบปรับปรุงของไทยอ้างอิงเอกสารที่แนวทางไทยใช้ (Banhiran 2014, BMI > 30) และฉบับขอนแก่นระบุว่าเป็นการทดลองใช้"),
@@ -687,7 +693,7 @@ function vCheck(){
  let tot=0,all=0;
  const bl=GROUPS.map(([k,c,ti,items])=>{
   const n=items.filter((_,i)=>checks[k+i]).length;tot+=n;all+=items.length;
-  return det(k,c,t(ti),items.map(([l],i)=>`<label class="ck"><input type="checkbox" data-ck="${k+i}"${checks[k+i]?' checked':''}><span>${t(l)}</span></label>`).join(''),`${n}/${items.length}`);
+  return det(k,c,t(ti),items.map(([l,hint],i)=>`<label class="ck"><input type="checkbox" data-ck="${k+i}"${checks[k+i]?' checked':''}><span>${t(l)}${hint?`<small>${t(hint)}</small>`:''}</span></label>`).join(''),`${n}/${items.length}`);
  }).join('');
  const cnt=g=>GROUPS.find(x=>x[0]===g)[3].filter((_,i)=>checks[g+i]).length;
  const night=cnt('sx'),day=cnt('dx'),sg=cnt('sg'),cm=cnt('cm'),rf=cnt('rf');
@@ -894,6 +900,8 @@ const REFS=[
   'Berlin Questionnaire. Netzer NC et al., Ann Intern Med 1999;131:485-491.']],
  ['teal',a('Other society guidelines','แนวทางสมาคมอื่น'),a('Obesity hypoventilation','Obesity hypoventilation'),'src4',[
   'Evaluation and management of obesity hypoventilation syndrome (American Thoracic Society). Mokhlesi B et al., Am J Respir Crit Care Med 2019;200:e6-e24. '+lnk('https://doi.org/10.1164/rccm.201905-1071ST','doi:10.1164/rccm.201905-1071ST')]],
+ ['sky',a('Lecture slides','สไลด์บรรยาย'),a('OSA symptoms and consequences','อาการและผลที่ตามมาของ OSA'),'src5',[
+  'Impact of obstructive sleep apnea (OSA): impact on health and overview of management in adults. Sawanyawisuth K, Department of Medicine, Faculty of Medicine, Khon Kaen University; KKU lecture 2025 (slide deck; the symptom list is slide 32, with slides 33–36 and 10 for the notes).']],
  ['amber',a('Trials and drug labels','การศึกษาและฉลากยา'),a('Cited in the complications and medicines lines','ที่อ้างถึงในข้อความเรื่องภาวะแทรกซ้อนและยา'),'src3',[
   'SAVE trial: CPAP for prevention of cardiovascular events in OSA. McEvoy RD et al., N Engl J Med 2016;375:919-931, PMID 27571048.',
   'US FDA, tirzepatide label for OSA (December 2024).']]];
